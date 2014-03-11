@@ -1,5 +1,7 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import net.stormdev.MTA.SMPlugin.events.EventManager;
+import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 
 import org.bukkit.Bukkit;
@@ -13,6 +15,15 @@ public class Core extends JavaPlugin {
 	public static Core plugin;
 	public static CustomLogger logger;
 	public static String verString;
+	
+	public Encrypter encrypter;
+	public EventManager eventManager;
+	
+	private int port;
+	private String ip;
+	private String securityKey;
+	private String serverName;
+	private String serverDescription;
 	
 	@Override
 	public void onEnable(){
@@ -31,6 +42,16 @@ public class Core extends JavaPlugin {
 				config.getString("colorScheme.info"),
 				config.getString("colorScheme.title"),
 				config.getString("colorScheme.title"));
+		
+		port = config.getInt("core.host.port");
+		securityKey = config.getString("core.host.securityKey");
+		ip = config.getString("core.host.ip");
+		serverName = config.getString("core.host.serverName");
+		serverDescription = config.getString("core.host.serverDescription");
+		
+		encrypter = new Encrypter(securityKey);
+		eventManager = new EventManager();
+		//TODO Load the connection stuff
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}

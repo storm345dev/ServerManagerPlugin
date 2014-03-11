@@ -1,12 +1,30 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.util.UUID;
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Configurator {
 	public static FileConfiguration configure(FileConfiguration config){
-		// Setup the core plugin settings
+		// Setup the general plugin settings
 		if(!config.contains("general.logger.colour")){
 			config.set("general.logger.colour", true);
+		}
+		// Setup the core plugin settings
+		if(!config.contains("core.host.ip")){
+			config.set("core.host.ip", "localhost");
+		}
+		if(!config.contains("core.host.port")){
+			config.set("core.host.port", 50000);
+		}
+		if(!config.contains("core.host.securityKey")){
+			config.set("core.host.securityKey", "pass");
+		}
+		if(!config.contains("core.host.serverName")){
+			config.set("core.host.serverName", UUID.randomUUID().toString());
+		}
+		if(!config.contains("core.host.serverDescription")){
+			config.set("core.host.serverDescription", "A minecraft server");
 		}
 		// Setup the colour scheme
 		if (!config.contains("colorScheme.success")) {
