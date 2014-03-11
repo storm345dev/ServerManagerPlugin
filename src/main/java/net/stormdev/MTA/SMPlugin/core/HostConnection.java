@@ -125,9 +125,14 @@ public class HostConnection implements Runnable {
 					if(line.equalsIgnoreCase("identify")){
 						Message toSend = new Message(MessageRecipient.HOST.getConnectionID(), connectionId, "indentify", "server"); //Tell them we're a server
 						msg(toSend);
+						continue;
 					}
 					else if(line.equalsIgnoreCase("close")){
 						close(false);
+						continue;
+					}
+					else if(line.equalsIgnoreCase("ping")){
+						rawMsg("pong");
 						continue;
 					}
 					//TODO Message handling
