@@ -1,0 +1,18 @@
+name: ServerManager
+author: 'storm345 and Bjarn'
+main: net.stormdev.MTA.SMPlugin.core.Core
+version: 0.1
+
+commands: 
+    servermanager:
+        description: Opens the overview
+        usage: /<command>
+        permission: servermanager.admin
+        permission-message: You don't have access to this command
+        default: op
+    serverlist:
+        description: Show the server list
+        usage: /<command>
+        permission: servermanager.user
+        permission-message: You don't have access to this command
+        default: true
