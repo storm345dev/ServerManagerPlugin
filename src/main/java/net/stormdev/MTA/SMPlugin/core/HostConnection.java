@@ -111,6 +111,10 @@ public class HostConnection implements Runnable {
 		}
 		connected = false;
 	}
+	
+	public void connectIt(){
+		//TODO Connect and reconnect when needed!
+	}
 
 	@Override
 	public void run() {
