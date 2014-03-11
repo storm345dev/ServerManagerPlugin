@@ -18,8 +18,6 @@ import org.bukkit.Bukkit;
 
 public class HostConnection implements Runnable {
 	
-	private String ip;
-	private int port;
 	private SocketAddress address;
 	private String connectionId;
 	private Socket socket;
@@ -31,8 +29,6 @@ public class HostConnection implements Runnable {
 	private boolean connect = true;
 	
 	public HostConnection(String ip, int port, String connectionId){
-		this.ip = ip;
-		this.port = port;
 		this.connectionId = connectionId;
 		this.address = new InetSocketAddress(ip, port);
 		connected = false;
