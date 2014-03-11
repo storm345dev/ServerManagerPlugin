@@ -1,5 +1,7 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.IOException;
+
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
@@ -18,6 +20,7 @@ public class Core extends JavaPlugin {
 	
 	public Encrypter encrypter;
 	public EventManager eventManager;
+	public HostConnection connection;
 	
 	private int port;
 	private String ip;
@@ -51,7 +54,16 @@ public class Core extends JavaPlugin {
 		
 		encrypter = new Encrypter(securityKey);
 		eventManager = new EventManager();
+		
 		//TODO Load the connection stuff
+		connection = new HostConnection(ip, port, serverName);
+		try {
+			connection.connect();
+		} catch (IOException e) {
+			e.printStackTrace();
+			Bukkit.getPluginManager().disablePlugin(this); //Disable
+			return;
+		}
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
