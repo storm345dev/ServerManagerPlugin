@@ -64,7 +64,7 @@ public class CustomLogger {
 
 	public void print(String message) {
 		if (coloured) {
-			console.sendMessage(ChatColor.RED + "[ServerManagerPlugin] "
+			console.sendMessage(ChatColor.GOLD + "["+ChatColor.AQUA+"ServerManagerPlugin"+ChatColor.GOLD+"] "
 					+ ChatColor.RESET + getMsg(message));
 		} else {
 			logger.info(getMsg(message));

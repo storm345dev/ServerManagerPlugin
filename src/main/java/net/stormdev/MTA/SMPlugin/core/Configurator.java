@@ -16,10 +16,10 @@ public class Configurator {
 			config.set("colorScheme.error", "&7");
 		}
 		if (!config.contains("colorScheme.info")) {
-			config.set("colorScheme.info", "&6");
+			config.set("colorScheme.info", "&b");
 		}
 		if (!config.contains("colorScheme.title")) {
-			config.set("colorScheme.title", "&4");
+			config.set("colorScheme.title", "&6");
 		}
 		if (!config.contains("colorScheme.tp")) {
 			config.set("colorScheme.tp", "&1");

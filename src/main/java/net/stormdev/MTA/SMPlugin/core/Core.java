@@ -12,10 +12,12 @@ public class Core extends JavaPlugin {
 	public static Colors colors;
 	public static Core plugin;
 	public static CustomLogger logger;
+	public static String verString;
 	
 	@Override
 	public void onEnable(){
 		plugin = this;
+		verString = getDescription().getVersion();
 		
 		config = getConfig();
 		config = Configurator.configure(config);
@@ -30,12 +32,12 @@ public class Core extends JavaPlugin {
 				config.getString("colorScheme.title"),
 				config.getString("colorScheme.title"));
 		
-		getServer().getLogger().info("ServerManagerPlugin has been enabled!");
+		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	
 	@Override
 	public void onDisable(){
 		
-		getServer().getLogger().info("ServerManagerPlugin has been disabled!");
+		logger.info("ServerManagerPlugin v"+verString+" has been disabled!");
 	}
 }
