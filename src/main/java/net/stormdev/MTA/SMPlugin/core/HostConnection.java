@@ -8,12 +8,13 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.net.SocketException;
 import java.util.List;
-
-import org.bukkit.Bukkit;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
+
+import org.bukkit.Bukkit;
 
 public class HostConnection implements Runnable {
 	
@@ -93,6 +94,23 @@ public class HostConnection implements Runnable {
 		out.println(msg);
 		out.flush();
 	}
+	
+	public void close(boolean terminate){
+		if(terminate){
+			connect = false; //Should stop reconnecting also
+		}
+		try {
+			if(in != null){
+				in.close();
+			}
+			if(out != null){
+				out.close();
+			}
+		} catch (IOException e) {
+			// Whatever
+		}
+		connected = false;
+	}
 
 	@Override
 	public void run() {
@@ -104,11 +122,28 @@ public class HostConnection implements Runnable {
 						Message toSend = new Message(MessageRecipient.HOST.getConnectionID(), connectionId, "indentify", "server"); //Tell them we're a server
 						msg(toSend);
 					}
+					else if(line.equalsIgnoreCase("close")){
+						close(false);
+						continue;
+					}
+					//TODO Message handling
 				}
-			} catch (IOException e) {
+			} catch (SocketException e){
+				//Connection cut
+				close(false);
+			} catch (Exception e) {
 				// AN ERROR???
-				e.printStackTrace();
+				continue;
 			}
+		}
+		if(connect){
+			//Reconnect
+			try {
+				connect();
+			} catch (IOException e) {
+				//TODO Recursive reconnect until it connects again
+			}
+			return;
 		}
 		return;
 	}
