@@ -16,7 +16,7 @@ public class Configurator {
 			config.set("colorScheme.error", "&7");
 		}
 		if (!config.contains("colorScheme.info")) {
-			config.set("colorScheme.info", "&b");
+			config.set("colorScheme.info", "&f");
 		}
 		if (!config.contains("colorScheme.title")) {
 			config.set("colorScheme.title", "&6");
