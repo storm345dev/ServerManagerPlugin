@@ -57,20 +57,14 @@ public class Core extends JavaPlugin {
 		
 		//TODO Load the connection stuff
 		connection = new HostConnection(ip, port, serverName);
-		try {
-			connection.connect();
-		} catch (IOException e) {
-			e.printStackTrace();
-			Bukkit.getPluginManager().disablePlugin(this); //Disable
-			return;
-		}
+		connection.connectIt();
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	
 	@Override
 	public void onDisable(){
-		
+		connection.close(true); //Fully shutdown connection
 		logger.info("ServerManagerPlugin v"+verString+" has been disabled!");
 	}
 }
