@@ -26,6 +26,10 @@ public class Configurator {
 		if(!config.contains("core.host.serverDescription")){
 			config.set("core.host.serverDescription", "A minecraft server");
 		}
+		// Setup the SM settings
+		if(!config.contains("server.settings.dynamicOpenAndCloseWithLag")){
+			config.set("server.settings.dynamicOpenAndCloseWithLag", true);
+		}
 		// Setup the colour scheme
 		if (!config.contains("colorScheme.success")) {
 			config.set("colorScheme.success", "&c");

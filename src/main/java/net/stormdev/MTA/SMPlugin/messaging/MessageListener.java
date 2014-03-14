@@ -1,8 +1,11 @@
 package net.stormdev.MTA.SMPlugin.messaging;
 
+import java.io.IOException;
+
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
+import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -16,7 +19,24 @@ public class MessageListener implements Listener<MessageEvent> {
 		Message message = event.getMessage();
 		
 		//TODO Handle message receiving
-		Core.plugin.logger.info("Received: "+message.getMsg());
+		Core.logger.info("Received: "+message.getMsg());
+		
+		String title = message.getMsgTitle();
+		
+		if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
+			if(title.equals("requestCommand")){
+				String cmd = message.getMsg();
+				if(cmd.equals("serverUpdate")){
+					try {
+						UpdateRequest.reply(); //Tell them how we are! :)
+					} catch (IOException e) {
+						// An error occured :(
+						e.printStackTrace(); //Show it
+					} 
+					return;
+				}
+			}
+		}
 		
 		return;
 	}

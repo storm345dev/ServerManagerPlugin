@@ -8,13 +8,15 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.connections.TransitMessage;
+import net.stormdev.MTA.SMPlugin.messaging.MessageEvent;
 import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
+import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
 
 import org.bukkit.Bukkit;
 
@@ -42,6 +44,10 @@ public class HostConnection implements Runnable {
 		this.connectionId = connectionId;
 		this.address = new InetSocketAddress(ip, port);
 		connected = false;
+	}
+	
+	public String getConnectionID(){
+		return connectionId;
 	}
 	
 	public void setShouldConnect(boolean con) {
@@ -78,7 +84,16 @@ public class HostConnection implements Runnable {
 
 			@Override
 			public void run() {
+				int i=0;
 				while(connected){
+					if(i<1){ //Every 30s
+						try {
+							UpdateRequest.reply();
+						} catch (IOException e) {
+							// An error?!? OH DEAR!
+							e.printStackTrace();
+						} //Tell the host service how we are!
+					}
 					rawMsg("alive");
 					try {
 						Thread.sleep(3000); //3s
@@ -89,6 +104,10 @@ public class HostConnection implements Runnable {
 							|| (aliveTime > 0 && (System.currentTimeMillis() - aliveTime) > 10000)){ //10s timeout
 						Core.logger.info("Connection timed out...");
 						close(false);
+					}
+					i++;
+					if(i>10){
+						i = 0;
 					}
  				}
 				return;
@@ -211,7 +230,7 @@ public class HostConnection implements Runnable {
 					try {
 						Message received = processMsg(line);
 						if(received != null){ //Message recieved!
-							Core.plugin.eventManager.callEvent(new net.stormdev.MTA.SMPlugin.messaging.MessageEvent(received)); //Tell everybody it's been received
+							Core.plugin.eventManager.callEvent(new MessageEvent(received)); //Tell everybody it's been received
 						}
 					} catch (Exception e) {
 						//Error in msg format
@@ -256,5 +275,21 @@ public class HostConnection implements Runnable {
 		//Message is more than one line, add to the list of being parsed
 		inbound.add(msg);
 		return null;
+	}
+	
+	public void sendMsg(Message msg){
+		sendRawMsg(msg.getRaw());
+	}
+	
+	public synchronized void sendRawMsg(Collection<? extends String> msg){
+		//Just do it
+		for(String m:msg){
+			rawMsg(m);
+		}
+	}
+	
+	public synchronized void sendRawMsg(String msg){
+		//Just do it
+		rawMsg(msg);
 	}
 }
