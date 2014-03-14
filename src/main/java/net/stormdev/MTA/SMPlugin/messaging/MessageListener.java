@@ -1,11 +1,13 @@
 package net.stormdev.MTA.SMPlugin.messaging;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
+import net.stormdev.MTA.SMPlugin.servers.Server;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -35,6 +37,24 @@ public class MessageListener implements Listener<MessageEvent> {
 					} 
 					return;
 				}
+			}
+			else if(title.equalsIgnoreCase("servers")){
+				//TODO We've been sent a list of all servers, process it...
+				String list = message.getMsg();
+				String[] raws = list.split(Pattern.quote(","));
+				Server[] srvs = new Server[raws.length];
+				for(int i=0;i<raws.length;i++){
+					Server s;
+					try {
+						s = Server.fromRawString(raws[i]);
+					} catch (Exception e) {
+						// An error???
+						e.printStackTrace();
+						continue;
+					}
+					srvs[i] = s;
+				}
+				Core.plugin.servers.setServers(srvs);
 			}
 		}
 		

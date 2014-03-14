@@ -3,8 +3,10 @@ package net.stormdev.MTA.SMPlugin.core;
 import java.util.Random;
 
 import net.stormdev.MTA.SMPlugin.events.EventManager;
+import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
+import net.stormdev.MTA.SMPlugin.servers.Servers;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 
 import org.bukkit.Bukkit;
@@ -25,6 +27,7 @@ public class Core extends JavaPlugin {
 	public EventManager eventManager;
 	public HostConnection connection;
 	public BukkitTask serverMonitor;
+	public Servers servers;
 	
 	private int port; //Host service's port
 	private String ip; //Host service's IP
@@ -34,6 +37,8 @@ public class Core extends JavaPlugin {
 	
 	private boolean serverOpen = true;
 	private boolean dynamicOpenClose;
+	
+	private ServerEventListener serverListener;
 	
 	public boolean getServerShouldOpenCloseDynamically(){
 		return dynamicOpenClose;
@@ -70,13 +75,18 @@ public class Core extends JavaPlugin {
 		loadConfigSettings();
 		//Config loaded!
 		
+		servers = new Servers();
+		
 		serverMonitor = Bukkit.getScheduler().runTaskTimer(Core.plugin,
 				new ServerMonitor(), 100L, 1L);
 		encrypter = new Encrypter(securityKey);
 		eventManager = new EventManager();
+		
 		new MessageListener(); //Listen to message events in the listener
 		
-		//TODO Load the connection stuff
+		serverListener = new ServerEventListener();
+		
+		//Load the connection stuff
 		connection = new HostConnection(ip, port, serverName);
 		connection.connectIt();
 		
