@@ -2,12 +2,14 @@ package net.stormdev.MTA.SMPlugin.core;
 
 import java.util.Random;
 
+import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
+import net.stormdev.MTA.SMPlugin.utils.CountDown;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -39,6 +41,7 @@ public class Core extends JavaPlugin {
 	private boolean dynamicOpenClose;
 	
 	private ServerEventListener serverListener;
+	private BukkitTask idle;
 	
 	public boolean getServerShouldOpenCloseDynamically(){
 		return dynamicOpenClose;
@@ -90,15 +93,41 @@ public class Core extends JavaPlugin {
 		connection = new HostConnection(ip, port, serverName);
 		connection.connectIt();
 		
+		setupCMDExecutors();
+		
+		idle();
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	
 	@Override
 	public void onDisable(){
 		serverMonitor.cancel(); //Terminate it
+		idle.cancel();
+		Bukkit.getScheduler().cancelTasks(this);
 		
 		connection.close(true); //Fully shutdown connection
 		logger.info("ServerManagerPlugin v"+verString+" has been disabled!");
+	}
+	
+	private void idle(){
+		final CountDown loop = new CountDown(6); //Each 'tick' is 10s apart
+		idle = Bukkit.getScheduler().runTaskTimerAsynchronously(Core.plugin, new Runnable(){
+
+			@Override
+			public void run() {
+				int i = loop.get();
+				
+				if(i == 6 || i == 3){ //Every 30s
+					servers.updateServers();
+				}
+				
+				loop.increment();
+				return;
+			}}, 200l, 200l); //Every 10s
+	}
+	
+	private void setupCMDExecutors(){
+		getCommand("servermanager").setExecutor(new ServerManagerCommandExecutor());
 	}
 	
 	public void loadConfigSettings(){

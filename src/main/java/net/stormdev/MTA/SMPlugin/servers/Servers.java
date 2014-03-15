@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.stormdev.MTA.SMPlugin.connections.Message;
+import net.stormdev.MTA.SMPlugin.core.Core;
+import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
+
+import org.bukkit.Bukkit;
+
 public class Servers {
 	private volatile Map<String, Server> servers = new HashMap<String, Server>();
 	
@@ -41,6 +47,26 @@ public class Servers {
 		for(Server s:srvs){
 			servers.put(s.getConnectionId(), s);
 		}
+		
+		//Fire a server list update event
+		final Servers list = this;
+		Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+			@Override
+			public void run() {
+				Core.plugin.eventManager.callEvent(new ServerListUpdateEvent(list));
+				return;
+			}});
+	}
+	
+	public void updateServers(){
+		Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+			@Override
+			public void run() { //Ask for the server list from the host, the listener will automatically update above for us
+				Core.plugin.connection.sendMsg(new Message(MessageRecipient.HOST.getConnectionID(), Core.plugin.connection.getConnectionID(), "getServers", "getServers"));
+				return;
+			}});
 	}
 
 }

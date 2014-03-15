@@ -86,7 +86,7 @@ public class HostConnection implements Runnable {
 			public void run() {
 				int i=0;
 				while(connected){
-					if(i<1){ //Every 30s
+					if(i<1){ //Every 15s
 						try {
 							UpdateRequest.reply();
 						} catch (IOException e) {
@@ -96,7 +96,7 @@ public class HostConnection implements Runnable {
 					}
 					rawMsg("alive");
 					try {
-						Thread.sleep(3000); //3s
+						Thread.sleep(1500); //1.5s
 					} catch (InterruptedException e) {
 						//Oh well
 					}

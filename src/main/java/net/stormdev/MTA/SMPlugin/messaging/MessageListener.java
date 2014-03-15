@@ -14,7 +14,7 @@ public class MessageListener implements Listener<MessageEvent> {
 	private Core main;
 	public MessageListener(){
 		main = Core.plugin;
-		Core.plugin.eventManager.registerListener(new MessageEvent(null), this); //Registers the event to us
+		Core.plugin.eventManager.registerListener(MessageEvent.class, this); //Registers the event to us
 	}
 	
 	public void onCall(MessageEvent event) {
@@ -34,7 +34,7 @@ public class MessageListener implements Listener<MessageEvent> {
 					} catch (IOException e) {
 						// An error occured :(
 						e.printStackTrace(); //Show it
-					} 
+					}
 					return;
 				}
 			}
