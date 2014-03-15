@@ -3,6 +3,7 @@ package net.stormdev.MTA.SMPlugin.core;
 import java.util.Random;
 
 import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
+import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
@@ -40,7 +41,6 @@ public class Core extends JavaPlugin {
 	private boolean serverOpen = true;
 	private boolean dynamicOpenClose;
 	
-	private ServerEventListener serverListener;
 	private BukkitTask idle;
 	
 	public boolean getServerShouldOpenCloseDynamically(){
@@ -87,7 +87,8 @@ public class Core extends JavaPlugin {
 		
 		new MessageListener(); //Listen to message events in the listener
 		
-		serverListener = new ServerEventListener();
+		new ServerEventListener();
+		new ConnectEventListener();
 		
 		//Load the connection stuff
 		connection = new HostConnection(ip, port, serverName);
