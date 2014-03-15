@@ -17,6 +17,7 @@ import net.stormdev.MTA.SMPlugin.connections.TransitMessage;
 import net.stormdev.MTA.SMPlugin.messaging.MessageEvent;
 import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
+import net.stormdev.MTA.SMPlugin.servers.ServerConnectToHostEvent;
 
 import org.bukkit.Bukkit;
 
@@ -203,6 +204,13 @@ public class HostConnection implements Runnable {
 					else if(!identified && line.equalsIgnoreCase("authenticated")){
 						identified = true;
 						Core.logger.info("Successfully connected to host service!");
+						Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+							@Override
+							public void run() {
+								Core.plugin.eventManager.callEvent(new ServerConnectToHostEvent());
+								return;
+							}});
 						continue;
 					}
 					else if(line.equalsIgnoreCase("close")){

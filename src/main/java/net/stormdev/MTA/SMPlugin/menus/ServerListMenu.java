@@ -44,7 +44,6 @@ public class ServerListMenu implements OptionClickEventHandler,Listener<ServerLi
 		
 		//Load menu icons
 		open(player);
-		refresh();
 	}
 	
 	private Inventory getInventory(){
@@ -66,10 +65,6 @@ public class ServerListMenu implements OptionClickEventHandler,Listener<ServerLi
 	
 	private void open(Player player){
 		menu.open(player);
-	}
-	
-	public void refresh(){
-		Core.plugin.servers.updateServers(); //Get them to refresh for it to update on the menu
 	}
 
 	@Override

@@ -44,7 +44,6 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		
 		//TODO Load menu icons
 		openAdmin(player);
-		refresh();
 	}
 	
 	private Inventory getInventory(){
@@ -74,10 +73,6 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 			return;
 		}
 		menu.open(player);
-	}
-	
-	public void refresh(){
-		Core.plugin.servers.updateServers(); //Get them to refresh for it to update on the menu
 	}
 
 	@Override
