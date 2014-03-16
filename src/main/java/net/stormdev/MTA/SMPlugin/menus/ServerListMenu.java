@@ -44,6 +44,7 @@ public class ServerListMenu implements OptionClickEventHandler,Listener<ServerLi
 		
 		//Load menu icons
 		open(player);
+		renderServers();
 	}
 	
 	private Inventory getInventory(){
@@ -90,7 +91,7 @@ public class ServerListMenu implements OptionClickEventHandler,Listener<ServerLi
 		final List<Server> list = Core.plugin.servers.getConnectedServers();
 		double quant = ((double)list.size()) / 9.0;
 		int icons = ((int) Math.ceil(quant))  *  9; //A multiple of 9 that fits all servers
-		if(inv.getSize() < icons){ //Need a bigger inventory :(
+		if(inv.getSize() < icons || menu.getSize() < icons){ //Need a bigger inventory :(
 			//Make the inventory bigger
 			player.setMetadata("ignoreInvClose", new MetaValue(true, Core.plugin)); //Effective cancel destroying this because of inv close
 			view.close();
@@ -117,6 +118,15 @@ public class ServerListMenu implements OptionClickEventHandler,Listener<ServerLi
 		
 		renderServers(inv, list);
 		
+	}
+	
+	private void renderServers(){
+		Inventory inv = getInventory();
+		if(inv == null){
+			return;
+		}
+		List<Server> list = Core.plugin.servers.getConnectedServers();
+		renderServers(inv, list);
 	}
 	
 	private void renderServers(Inventory inv, List<Server> list){

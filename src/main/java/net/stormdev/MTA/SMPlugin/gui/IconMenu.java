@@ -43,6 +43,10 @@ public class IconMenu implements Listener {
 		this.metaData = "menu." + UUID.randomUUID().toString();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
+	
+	public synchronized int getSize(){
+		return optionIcons.length;
+	}
 
 	public synchronized IconMenu setOption(int position, ItemStack icon, String name,
 			String... info) {

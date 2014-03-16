@@ -2,6 +2,7 @@ package net.stormdev.MTA.SMPlugin.core;
 
 import java.util.Random;
 
+import net.stormdev.MTA.SMPlugin.commands.ServerListCommandExecutor;
 import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
@@ -129,6 +130,7 @@ public class Core extends JavaPlugin {
 	
 	private void setupCMDExecutors(){
 		getCommand("servermanager").setExecutor(new ServerManagerCommandExecutor());
+		getCommand("serverlist").setExecutor(new ServerListCommandExecutor());
 	}
 	
 	public void loadConfigSettings(){

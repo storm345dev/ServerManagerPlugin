@@ -42,8 +42,9 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		
 		menu = new IconMenu(title, icons, this, Core.plugin);
 		
-		//TODO Load menu icons
-		openAdmin(player);
+		//Load menu icons
+		open(player);
+		renderServers();
 	}
 	
 	private Inventory getInventory(){
@@ -63,11 +64,11 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		menu.destroy();
 	}
 	
-	private void openAdmin(Player player){
+	private void open(Player player){
 		menu.open(player);
 	}
 	
-	private void openAdmin(){
+	private void open(){
 		Player player = Bukkit.getPlayer(playerName);
 		if(player == null || !player.isOnline()){
 			return;
@@ -97,7 +98,7 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		final List<Server> list = Core.plugin.servers.getConnectedServers();
 		double quant = ((double)list.size()) / 9.0;
 		int icons = ((int) Math.ceil(quant))  *  9; //A multiple of 9 that fits all servers
-		if(inv.getSize() < icons){ //Need a bigger inventory :(
+		if(inv.getSize() < icons || menu.getSize() < icons){ //Need a bigger inventory :(
 			//Make the inventory bigger
 			player.setMetadata("ignoreInvClose", new MetaValue(true, Core.plugin)); //Effective cancel destroying this because of inv close
 			view.close();
@@ -124,6 +125,15 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		
 		renderServers(inv, list);
 		
+	}
+	
+	private void renderServers(){
+		Inventory inv = getInventory();
+		if(inv == null){
+			return;
+		}
+		List<Server> list = Core.plugin.servers.getConnectedServers();
+		renderServers(inv, list);
 	}
 	
 	private void renderServers(Inventory inv, List<Server> list){
@@ -167,7 +177,6 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		return null;
 	}
 	
-	@SuppressWarnings("deprecation")
 	private ItemStack getShow(int resourceScore, boolean open){
 		DyeColor color = DyeColor.YELLOW;
 		
