@@ -21,7 +21,7 @@ public class MessageListener implements Listener<MessageEvent> {
 		Message message = event.getMessage();
 		
 		//TODO Handle message receiving
-		Core.logger.info("Received: "+message.getMsg());
+		Core.logger.debug("Received: "+message.getMsg());
 		
 		String title = message.getMsgTitle();
 		

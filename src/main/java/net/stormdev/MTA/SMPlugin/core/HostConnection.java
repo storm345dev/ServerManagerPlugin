@@ -74,7 +74,7 @@ public class HostConnection implements Runnable {
 			startKeepAlive();
 			connected = true;
 		} catch (Exception e) { //Connection attempt failed
-			Core.logger.info("Connection attempt failed!");
+			Core.logger.debug("Connection attempt failed!");
 			return false;
 		}
 		return true;
@@ -168,7 +168,7 @@ public class HostConnection implements Runnable {
 						&& instance.equals(con)){ //Check it's ourselves, and not reloaded self
 					try {
 						if(!isConnected()){
-							Core.logger.info("Attempting connection...");
+							Core.logger.debug("Attempting connection...");
 							//Reconnect
 							if(!connect()){ //Attempt to connect again
 								//It failed to connect

@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 
 public class CustomLogger {
+	private static final boolean debug = false;
 	public Boolean coloured = true;
 	ConsoleCommandSender console = null;
 	Logger logger = null;
@@ -21,6 +22,12 @@ public class CustomLogger {
 		}
 		this.console = console;
 		this.logger = logger;
+	}
+	
+	public void debug(String msg){
+		if(debug){
+			info(msg);
+		}
 	}
 
 	public void setColoured(Boolean coloured) {
