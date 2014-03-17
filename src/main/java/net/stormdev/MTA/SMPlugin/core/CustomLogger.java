@@ -9,7 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 
 public class CustomLogger {
-	private static final boolean debug = true;
+	private static final boolean debug = false;
 	public Boolean coloured = true;
 	ConsoleCommandSender console = null;
 	Logger logger = null;

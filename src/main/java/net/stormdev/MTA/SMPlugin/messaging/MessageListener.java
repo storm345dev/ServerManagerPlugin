@@ -25,7 +25,18 @@ public class MessageListener implements Listener<MessageEvent> {
 		
 		String title = message.getMsgTitle();
 		
-		if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
+		if(message.getFrom().equals(Core.plugin.connection.getConnectionID())){ //From ourself
+			if(message.getMsgTitle().equals("networkTest")){
+				String rec = message.getMsg();
+				String shouldMatch = Encrypter.networkTest;
+				Core.logger.debug("Network test return: "+rec);
+				if(!rec.equals(shouldMatch)){
+					Core.logger.error(new RuntimeException("Error in network communications! Are your security keys in UTF-8?"));
+				}
+				return;
+			}
+		}
+		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
 			if(title.equals("requestCommand")){
 				String cmd = message.getMsg();
 				if(cmd.equals("serverUpdate")){

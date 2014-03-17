@@ -152,12 +152,13 @@ public class Core extends JavaPlugin {
 		
 		port = config.getInt("core.host.port");
 		try {
-			securityKey = new String(config.getString("core.host.securityKey").getBytes(), "UTF-16");
+			securityKey = new String(config.getString("core.host.securityKey").getBytes(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// Unsupported
 			e.printStackTrace();
 		}
 		securityKey = securityKey.trim();
+		Core.logger.info("Using securityKey: '"+securityKey+"'");
 		ip = config.getString("core.host.ip");
 		serverName = config.getString("core.host.serverName");
 		serverDescription = config.getString("core.host.serverDescription");

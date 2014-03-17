@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.connections.TransitMessage;
+import net.stormdev.MTA.SMPlugin.core.Core;
 
 public class Encrypter {
 	
 	private volatile char[] pass;
+	public static String networkTest;
 	
 	public Encrypter(String phrase){
 		pass = phrase.toCharArray();
@@ -81,5 +83,13 @@ public class Encrypter {
 				change(
 						change(rand)  )  );
 		return rand.equals(test) && Message.test() && TransitMessage.test();
+	}
+	
+	public void testNetwork(){
+		String rand = UUID.randomUUID().toString()+UUID.randomUUID().toString()+UUID.randomUUID().toString()+"fsufhsdfhsdkjfhsdjkf|||||11";
+		Message testMsg = new Message(Core.plugin.connection.getConnectionID(), Core.plugin.connection.getConnectionID(), "networkTest", rand);
+		networkTest = rand;
+		Core.logger.debug("Network test msg: "+rand);
+		Core.plugin.connection.sendMsg(testMsg);
 	}
 }
