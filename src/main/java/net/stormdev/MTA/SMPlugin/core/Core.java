@@ -1,6 +1,7 @@
 package net.stormdev.MTA.SMPlugin.core;
 
 import java.util.Random;
+import java.util.UUID;
 
 import net.stormdev.MTA.SMPlugin.commands.ServerListCommandExecutor;
 import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
@@ -12,6 +13,7 @@ import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 import net.stormdev.MTA.SMPlugin.utils.CountDown;
+import net.stormdev.MTA.SMPlugin.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,6 +28,7 @@ public class Core extends JavaPlugin {
 	public static CustomLogger logger;
 	public static String verString;
 	public static Random random = new Random();
+	public static UUID instanceId;
 	
 	public Encrypter encrypter;
 	public EventManager eventManager;
@@ -41,6 +44,8 @@ public class Core extends JavaPlugin {
 	
 	private boolean serverOpen = true;
 	private boolean dynamicOpenClose;
+	private boolean restartOnCrash = true;
+	private String restartScript;
 	
 	private BukkitTask idle;
 	
@@ -66,6 +71,7 @@ public class Core extends JavaPlugin {
 	
 	@Override
 	public void onEnable(){
+		instanceId = UUID.randomUUID();
 		plugin = this;
 		verString = getDescription().getVersion();
 		
@@ -146,5 +152,7 @@ public class Core extends JavaPlugin {
 		serverName = config.getString("core.host.serverName");
 		serverDescription = config.getString("core.host.serverDescription");
 		dynamicOpenClose = config.getBoolean("server.settings.dynamicOpenAndCloseWithLag");
+		restartOnCrash = config.getBoolean("server.settings.restartOnCrash");
+		restartScript = config.getString("server.settings.restartScript");
 	}
 }

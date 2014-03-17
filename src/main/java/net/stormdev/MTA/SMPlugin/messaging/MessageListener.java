@@ -39,7 +39,7 @@ public class MessageListener implements Listener<MessageEvent> {
 				}
 			}
 			else if(title.equalsIgnoreCase("servers")){
-				//TODO We've been sent a list of all servers, process it...
+				//We've been sent a list of all servers, process it...
 				String list = message.getMsg();
 				String[] raws = list.split(Pattern.quote(","));
 				Server[] srvs = new Server[raws.length];
@@ -49,7 +49,6 @@ public class MessageListener implements Listener<MessageEvent> {
 						s = Server.fromRawString(raws[i]);
 					} catch (Exception e) {
 						// An error???
-						e.printStackTrace();
 						continue;
 					}
 					srvs[i] = s;
