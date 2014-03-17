@@ -1,5 +1,6 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -11,10 +12,13 @@ public class AntiCrash extends Thread {
 	private static AntiCrash instance;
 	
 	private UUID instanceId;
+	private String command;
 	private boolean running = true;
-	public AntiCrash(UUID instance){
+	
+	public AntiCrash(UUID instance, String startCommand){
 		this.instanceId = instance;
 		AntiCrash.instance = this;
+		this.command = startCommand;
 	}
 	
 	public static AntiCrash getInstance(){
@@ -31,7 +35,7 @@ public class AntiCrash extends Thread {
 	
 	@Override
 	public void run(){
-		//TODO Main script
+		//Main script
 		while(running){
 			//Check if it's crashed
 			try {
@@ -55,6 +59,12 @@ public class AntiCrash extends Thread {
 		if(!running || instanceId != Core.instanceId){
 			return;
 		}
-		
+		try {
+			Runtime.getRuntime().exec(command);
+			Runtime.getRuntime().exit(0);
+		} catch (IOException e) {
+			//Oh well...
+		}
+		return;
 	}
 }

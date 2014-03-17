@@ -20,6 +20,7 @@ public class Encrypter {
 		if(decrypt){
 			msg = fromChanged(msg);
 		}
+		msg = msg.replaceAll("`", "");
 		
 		List<Integer> chs = new ArrayList<Integer>();
 		char[] chars = msg.toCharArray();
@@ -55,7 +56,7 @@ public class Encrypter {
 	}
 	
 	public String fromChanged(String changed){ //Only translates, doesn't decrypt
-		changed = changed.replaceFirst("`", "");
+		changed = changed.replaceAll("`", "");
 		String[] parts = changed.split(",");
 		
 		StringBuilder product = new StringBuilder();
@@ -75,7 +76,7 @@ public class Encrypter {
 	}
 	
 	public boolean test(){
-		String rand = UUID.randomUUID().toString();
+		String rand = UUID.randomUUID().toString()+UUID.randomUUID().toString()+UUID.randomUUID().toString()+"fsufhsdfhsdkjfhsdjkf|||||11";
 		String test = fromChanged(
 				change(
 						change(rand)  )  );

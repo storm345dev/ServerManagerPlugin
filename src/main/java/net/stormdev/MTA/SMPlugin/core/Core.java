@@ -1,5 +1,6 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
 
@@ -90,6 +91,9 @@ public class Core extends JavaPlugin {
 		serverMonitor = Bukkit.getScheduler().runTaskTimer(Core.plugin,
 				new ServerMonitor(), 100L, 1L);
 		encrypter = new Encrypter(securityKey);
+		if(!encrypter.test()){
+			Core.logger.info("BAD security key!");
+		}
 		eventManager = new EventManager();
 		
 		new MessageListener(); //Listen to message events in the listener
@@ -147,7 +151,13 @@ public class Core extends JavaPlugin {
 				config.getString("colorScheme.title"));
 		
 		port = config.getInt("core.host.port");
-		securityKey = config.getString("core.host.securityKey");
+		try {
+			securityKey = new String(config.getString("core.host.securityKey").getBytes(), "UTF-16");
+		} catch (UnsupportedEncodingException e) {
+			// Unsupported
+			e.printStackTrace();
+		}
+		securityKey = securityKey.trim();
 		ip = config.getString("core.host.ip");
 		serverName = config.getString("core.host.serverName");
 		serverDescription = config.getString("core.host.serverDescription");
