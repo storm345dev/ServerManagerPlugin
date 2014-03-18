@@ -36,6 +36,9 @@ public class Configurator {
 		if(!config.contains("server.settings.restartScript")){
 			config.set("server.settings.restartScript", "launch.bat");
 		}
+		if(!config.contains("server.settings.restartScriptPrefix")){
+			config.set("server.settings.restartScriptPrefix", "cmd /c start");
+		}
 		// Setup the colour scheme
 		if (!config.contains("colorScheme.success")) {
 			config.set("colorScheme.success", "&c");

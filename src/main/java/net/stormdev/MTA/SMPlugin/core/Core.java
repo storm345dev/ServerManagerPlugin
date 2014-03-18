@@ -14,7 +14,6 @@ import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 import net.stormdev.MTA.SMPlugin.utils.CountDown;
-import net.stormdev.MTA.SMPlugin.utils.Scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -71,6 +70,12 @@ public class Core extends JavaPlugin {
 	}
 	
 	@Override
+	public void onLoad(){
+		ServerOutput outputHandler = new ServerOutput();
+		//TODO Read from the latest.log file
+	}
+	
+	@Override
 	public void onEnable(){
 		instanceId = UUID.randomUUID();
 		plugin = this;
@@ -108,6 +113,18 @@ public class Core extends JavaPlugin {
 		setupCMDExecutors();
 		
 		idle();
+		
+		new AntiCrash(instanceId, restartScript);
+		if(restartOnCrash){
+			Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){ //Run it post-server startup
+
+				@Override
+				public void run() {
+					AntiCrash.getInstance().start();
+					return;
+				}});
+		}
+		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	

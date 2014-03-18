@@ -1,11 +1,13 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import net.stormdev.MTA.SMPlugin.utils.Scheduler;
+import net.stormdev.MTA.SMPlugin.utils.TaskTimeoutException;
+
+import org.bukkit.Bukkit;
 
 public class AntiCrash extends Thread {
 	
@@ -14,11 +16,17 @@ public class AntiCrash extends Thread {
 	private UUID instanceId;
 	private String command;
 	private boolean running = true;
+	private File dir; //Server dir
+	private String[] args;
 	
 	public AntiCrash(UUID instance, String startCommand){
 		this.instanceId = instance;
 		AntiCrash.instance = this;
 		this.command = startCommand;
+		Core.plugin.getDataFolder().getParentFile().getParentFile(); //The server's dir
+		String prefix = Core.config.getString("server.settings.restartScriptPrefix");
+		prefix = prefix.trim(); //Remove whitespace
+		args = prefix.split(" "); //Each cmd arg
 	}
 	
 	public static AntiCrash getInstance(){
@@ -45,23 +53,56 @@ public class AntiCrash extends Thread {
 					public void run() {
 						Bukkit.getServer().getMotd(); //Do a meaningless task
 						return;
-					}}, 60); //60s
-			} catch (Exception e) {
+					}}, 55); //60s
+			} catch (TaskTimeoutException e) {
 				//The task timed out!
 				onTimeout();
+			} catch(Exception e){
+				running = false; //Server is stopping/reloading
 			}
-			
+			try {
+				Thread.sleep(2000); //2s
+			} catch (InterruptedException e) {
+			}
 		}
+		Core.logger.info("Auto-restart script exited!");
 		return;
+	}
+	
+	public void testFreeze(){
+		try {
+			Scheduler.runBlockingSyncTaskNoTimeout(new Runnable(){
+
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(120000);
+					} catch (InterruptedException e) {
+						//Lol
+					}
+					return;
+				}});
+		} catch (Exception e) {
+			// IDK
+			e.printStackTrace();
+		}
 	}
 	
 	private void onTimeout(){
 		if(!running || instanceId != Core.instanceId){
 			return;
 		}
+		System.out.println("Restarting...!");
 		try {
-			Runtime.getRuntime().exec(command);
-			Runtime.getRuntime().exit(0);
+			// "cmd", "/c", "start"
+			String[] cmds = new String[args.length+1];
+			for(int i=0;i<args.length;i++){
+				cmds[i] = args[i];
+			}
+			cmds[cmds.length-1] = command;
+			Runtime.getRuntime().exec(cmds, null, dir); //Actually restart the server
+			System.exit(1); //Exit the current server
+			
 		} catch (IOException e) {
 			//Oh well...
 		}

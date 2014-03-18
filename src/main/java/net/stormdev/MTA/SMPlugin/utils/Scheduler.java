@@ -33,7 +33,7 @@ public class Scheduler {
 		
 		if(timeout < 1){
 			//It timed out
-			throw new Exception("Sync blocking task in ServerManager failed to finish in time and was timed out! This isn't a bug, it's just an operation failure.");
+			throw new TaskTimeoutException();
 		}
 	}
 	
@@ -59,13 +59,14 @@ public class Scheduler {
 			try {
 				Thread.sleep(250);
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			timeout--;
 		}
 		
 		if(timeout < 1){
 			//It timed out
-			throw new Exception("Sync blocking task in ServerManager failed to finish in time and was timed out! This isn't a bug, it's just an operation failure.");
+			throw new TaskTimeoutException();
 		}
 	}
 	
