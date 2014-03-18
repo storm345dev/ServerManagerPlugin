@@ -16,14 +16,12 @@ public class AntiCrash extends Thread {
 	private UUID instanceId;
 	private String command;
 	private boolean running = true;
-	private File dir; //Server dir
 	private String[] args;
 	
 	public AntiCrash(UUID instance, String startCommand){
 		this.instanceId = instance;
 		AntiCrash.instance = this;
 		this.command = startCommand;
-		Core.plugin.getDataFolder().getParentFile().getParentFile(); //The server's dir
 		String prefix = Core.config.getString("server.settings.restartScriptPrefix");
 		prefix = prefix.trim(); //Remove whitespace
 		args = prefix.split(" "); //Each cmd arg
@@ -100,7 +98,7 @@ public class AntiCrash extends Thread {
 				cmds[i] = args[i];
 			}
 			cmds[cmds.length-1] = command;
-			Runtime.getRuntime().exec(cmds, null, dir); //Actually restart the server
+			Runtime.getRuntime().exec(cmds); //Actually restart the server
 			System.exit(1); //Exit the current server
 			
 		} catch (IOException e) {

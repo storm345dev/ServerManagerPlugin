@@ -1,5 +1,8 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
@@ -46,6 +49,7 @@ public class Core extends JavaPlugin {
 	private boolean dynamicOpenClose;
 	private boolean restartOnCrash = true;
 	private String restartScript;
+	private ServerOutput outputReader;
 	
 	private BukkitTask idle;
 	
@@ -67,12 +71,6 @@ public class Core extends JavaPlugin {
 	
 	public String getServerDescription(){
 		return serverDescription;
-	}
-	
-	@Override
-	public void onLoad(){
-		ServerOutput outputHandler = new ServerOutput();
-		//TODO Read from the latest.log file
 	}
 	
 	@Override
@@ -125,6 +123,10 @@ public class Core extends JavaPlugin {
 				}});
 		}
 		
+		if(config.getBoolean("server.settings.shareConsole")){
+			new ServerOutput();
+		}
+		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	
@@ -133,7 +135,9 @@ public class Core extends JavaPlugin {
 		serverMonitor.cancel(); //Terminate it
 		idle.cancel();
 		Bukkit.getScheduler().cancelTasks(this);
-		
+		if(outputReader != null){
+			outputReader.stop();
+		}
 		connection.close(true); //Fully shutdown connection
 		logger.info("ServerManagerPlugin v"+verString+" has been disabled!");
 	}

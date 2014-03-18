@@ -39,6 +39,9 @@ public class Configurator {
 		if(!config.contains("server.settings.restartScriptPrefix")){
 			config.set("server.settings.restartScriptPrefix", "cmd /c start");
 		}
+		if(!config.contains("server.settings.shareConsole")){
+			config.set("server.settings.shareConsole", true);
+		}
 		// Setup the colour scheme
 		if (!config.contains("colorScheme.success")) {
 			config.set("colorScheme.success", "&c");
