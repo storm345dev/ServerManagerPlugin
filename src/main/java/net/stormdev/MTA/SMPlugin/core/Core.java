@@ -1,8 +1,5 @@
 package net.stormdev.MTA.SMPlugin.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
