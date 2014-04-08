@@ -3,6 +3,7 @@ package net.stormdev.MTA.SMPlugin.core;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.uPlanes.utils.Colors;
 
 import org.apache.logging.log4j.Level;
@@ -64,9 +65,15 @@ public class ServerOutput extends AbstractAppender {
 		}
 	}
 	
-	private void send(String msg){
-		//TODO Send the message to the online client
-		
+	private void send(final String msg){
+		//Send the message to the online client
+		Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+			@Override
+			public void run() {
+				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", msg));
+				return;
+			}});
 	}
 	
 	private String getTime(long millis){

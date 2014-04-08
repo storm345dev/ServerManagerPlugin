@@ -3,6 +3,8 @@ package net.stormdev.MTA.SMPlugin.messaging;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
+
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
@@ -35,6 +37,11 @@ public class MessageListener implements Listener<MessageEvent> {
 				}
 				return;
 			}
+		}
+		else if(title.equals("executeCommand")){
+			String command = message.getMsg();
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
 			if(title.equals("requestCommand")){
