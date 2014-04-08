@@ -76,6 +76,15 @@ public class ServerOutput extends AbstractAppender {
 			@Override
 			public void run() {
 				String out = String.format(msg, Locale.ENGLISH);
+				if(out.contains("<") && out.contains(">")){
+					int start = out.indexOf("<");
+					int end = out.indexOf(">");
+					String name = out.substring(start+1, end);
+					name = name.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll(Pattern.quote("\""), Matcher.quoteReplacement("\\\"")).replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\\'"));
+					String first = out.substring(0, 8);
+					String second = out.substring(end+1);
+					out = first+" < "+name+" > "+second;
+				}
 				final String toSend =
 					    out.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll(Pattern.quote("\""), Matcher.quoteReplacement("\\\"")).replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\\'"));
 				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", toSend));
