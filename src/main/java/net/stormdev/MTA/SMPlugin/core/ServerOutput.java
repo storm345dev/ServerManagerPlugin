@@ -2,6 +2,9 @@ package net.stormdev.MTA.SMPlugin.core;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.uPlanes.utils.Colors;
@@ -26,6 +29,7 @@ public class ServerOutput extends AbstractAppender {
 	
 	public ServerOutput(){
 		super("ServerManager", null, null);
+		//output = (Logger) LogManager.getRootLogger();
 		output = (Logger) LogManager.getRootLogger();
 		output.addAppender(this);
 	}
@@ -71,7 +75,10 @@ public class ServerOutput extends AbstractAppender {
 
 			@Override
 			public void run() {
-				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", msg));
+				String out = String.format(msg, Locale.ENGLISH);
+				final String toSend =
+					    out.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll(Pattern.quote("\""), Matcher.quoteReplacement("\\\"")).replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\\'"));
+				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", toSend));
 				return;
 			}});
 	}
