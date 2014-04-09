@@ -76,6 +76,7 @@ public class ServerOutput extends AbstractAppender {
 			@Override
 			public void run() {
 				String out = String.format(msg, Locale.ENGLISH);
+				/*
 				if(out.contains("<") && out.contains(">")){
 					int start = out.indexOf("<");
 					int end = out.indexOf(">");
@@ -87,6 +88,8 @@ public class ServerOutput extends AbstractAppender {
 				}
 				final String toSend =
 					    out.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll(Pattern.quote("\""), Matcher.quoteReplacement("\\\"")).replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\\'"));
+				*/
+				final String toSend = out;
 				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", toSend));
 				return;
 			}});
