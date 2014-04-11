@@ -1,6 +1,6 @@
 package net.stormdev.MTA.SMPlugin.utils;
 
-import net.stormdev.ucars.trade.main;
+import net.stormdev.MTA.SMPlugin.core.Core;
 
 import org.bukkit.Bukkit;
 
@@ -8,7 +8,7 @@ public class Scheduler {
 	public static void runBlockingSyncTask(final Runnable run) throws Exception{
 		final ToggleLatch latch = new ToggleLatch().lock(); //Create a new latch, and lock it
 		
-		Bukkit.getScheduler().runTask(main.plugin, new Runnable(){
+		Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
 
 			@Override
 			public void run() {
@@ -40,7 +40,7 @@ public class Scheduler {
 	public static void runBlockingSyncTask(final Runnable run, int timeOut) throws Exception{
 		final ToggleLatch latch = new ToggleLatch().lock(); //Create a new latch, and lock it
 		
-		Bukkit.getScheduler().runTask(main.plugin, new Runnable(){
+		Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
 
 			@Override
 			public void run() {
@@ -73,7 +73,7 @@ public class Scheduler {
 	public static void runBlockingSyncTaskNoTimeout(final Runnable run) throws Exception{
 		final ToggleLatch latch = new ToggleLatch().lock(); //Create a new latch, and lock it
 		
-		Bukkit.getScheduler().runTask(main.plugin, new Runnable(){
+		Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
 
 			@Override
 			public void run() {

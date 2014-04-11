@@ -27,9 +27,13 @@ public class ServerOutput extends AbstractAppender {
 	public ServerOutput(){
 		super("ServerManager", null, null);
 		//output = (Logger) LogManager.getRootLogger();
-		super.start();
-		output = (Logger) LogManager.getRootLogger();
-		output.addAppender(this);
+		try {
+			super.start();
+			output = (Logger) LogManager.getRootLogger();
+			output.addAppender(this);
+		} catch (Exception e) {
+			Core.logger.error("Unable to start console sharing!", e);
+		}
 	}
 
 	@Override

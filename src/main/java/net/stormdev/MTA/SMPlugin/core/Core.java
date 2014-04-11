@@ -81,7 +81,6 @@ public class Core extends JavaPlugin {
 		saveConfig();
 		
 		logger = new CustomLogger(Bukkit.getConsoleSender(), getLogger());
-		
 		// Load the config...
 		loadConfigSettings();
 		//Config loaded!
@@ -107,6 +106,7 @@ public class Core extends JavaPlugin {
 		
 		setupCMDExecutors();
 		
+		logger.info("Starting up...");
 		idle();
 		
 		new AntiCrash(instanceId, restartScript);
@@ -115,14 +115,23 @@ public class Core extends JavaPlugin {
 
 				@Override
 				public void run() {
+					logger.info("Starting automatic crash recovery...");
 					AntiCrash.getInstance().start();
 					return;
 				}});
 		}
 		
 		if(config.getBoolean("server.settings.shareConsole")){
-			new ServerOutput();
+			Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+				@Override
+				public void run() {
+					logger.info("Starting console sharing...");
+					new ServerOutput();
+					return;
+				}});
 		}
+		logger.info("Started!");
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
