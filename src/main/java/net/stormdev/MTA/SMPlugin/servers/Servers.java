@@ -43,9 +43,14 @@ public class Servers {
 	}
 	
 	public synchronized void setServers(Server... srvs){
-		servers.clear();
-		for(Server s:srvs){
-			servers.put(s.getConnectionId(), s);
+		try {
+			servers.clear();
+			for(Server s:srvs){
+				servers.put(s.getConnectionId(), s);
+			}
+		} catch (Exception e) {
+			//Errors happen when passcode is wrong
+			return;
 		}
 		
 		//Fire a server list update event

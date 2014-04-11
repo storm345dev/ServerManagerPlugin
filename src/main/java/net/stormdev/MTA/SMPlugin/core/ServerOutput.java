@@ -3,8 +3,6 @@ package net.stormdev.MTA.SMPlugin.core;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.uPlanes.utils.Colors;
@@ -16,7 +14,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 
 
@@ -30,6 +27,7 @@ public class ServerOutput extends AbstractAppender {
 	public ServerOutput(){
 		super("ServerManager", null, null);
 		//output = (Logger) LogManager.getRootLogger();
+		super.start();
 		output = (Logger) LogManager.getRootLogger();
 		output.addAppender(this);
 	}
