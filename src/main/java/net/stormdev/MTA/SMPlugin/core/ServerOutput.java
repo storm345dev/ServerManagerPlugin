@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
-import net.stormdev.uPlanes.utils.Colors;
+import net.stormdev.MTA.SMPlugin.utils.Colors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
