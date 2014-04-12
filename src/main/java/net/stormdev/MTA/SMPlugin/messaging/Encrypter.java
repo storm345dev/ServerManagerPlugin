@@ -22,7 +22,6 @@ public class Encrypter {
 		if(decrypt){
 			msg = fromChanged(msg);
 		}
-		msg = msg.replaceAll("`", "");
 		
 		List<Integer> chs = new ArrayList<Integer>();
 		char[] chars = msg.toCharArray();
