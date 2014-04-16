@@ -12,7 +12,6 @@ public class ConnectEventListener implements Listener<ServerConnectToHostEvent> 
 	@Override
 	public void onCall(ServerConnectToHostEvent event) {
 		// On connect do:...
-		Core.plugin.encrypter.testNetwork();
 		Core.plugin.servers.updateServers();
 		return;
 	}

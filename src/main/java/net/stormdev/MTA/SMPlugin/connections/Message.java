@@ -65,7 +65,7 @@ public class Message {
 	}
 	
 	public List<String> getRaw(){ // To|From|Title|i|iMax|Send|ID| And is automatically split for long msgs
-		String enc = Core.plugin.encrypter.change(getMsg());
+		String enc = Core.plugin.encrypter.encrypt(getMsg());
 		List<String> parts = new ArrayList<String>();
 		
 		for(int p=0;p<enc.length();p+=msgSplineLength){
@@ -106,7 +106,7 @@ public class Message {
 		}
 		
 		String enc = product.toString();
-		String msg = Core.plugin.encrypter.fromChanged(Core.plugin.encrypter.change(enc));
+		String msg = Core.plugin.encrypter.decrypt(enc);
 		return new Message(to, from, title, msg, id);
 	}
 	
