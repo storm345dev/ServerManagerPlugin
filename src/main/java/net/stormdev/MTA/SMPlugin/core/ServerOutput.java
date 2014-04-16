@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.stormdev.MTA.SMPlugin.connections.Message;
+import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 
 import org.apache.logging.log4j.Level;
@@ -92,7 +93,7 @@ public class ServerOutput extends AbstractAppender {
 					    out.replaceAll("\u001B\\[[;\\d]*m", "").replaceAll(Pattern.quote("\""), Matcher.quoteReplacement("\\\"")).replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\\'"));
 				*/
 				final String toSend = out;
-				Core.plugin.connection.sendMsg(new Message("web", Core.plugin.connection.getConnectionID(), "consoleOutput", toSend));
+				Core.plugin.connection.sendMsg(new Message(MessageRecipient.HOST.getConnectionID(), Core.plugin.connection.getConnectionID(), "consoleOutput", toSend));
 				return;
 			}});
 	}
