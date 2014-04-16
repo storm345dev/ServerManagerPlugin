@@ -53,7 +53,7 @@ public class AntiCrash extends Thread {
 					}}, 55); //60s
 			} catch (TaskTimeoutException e) {
 				//The task timed out!
-				onTimeout();
+				onTimeout(false);
 			} catch(Exception e){
 				running = false; //Server is stopping/reloading
 			}
@@ -85,8 +85,12 @@ public class AntiCrash extends Thread {
 		}
 	}
 	
-	private void onTimeout(){
-		if(!running || instanceId != Core.instanceId){
+	public void restart(){
+		onTimeout(true);
+	}
+	
+	private void onTimeout(boolean force){
+		if(!force && (!running || instanceId != Core.instanceId)){
 			return;
 		}
 		System.out.println("Restarting...!");

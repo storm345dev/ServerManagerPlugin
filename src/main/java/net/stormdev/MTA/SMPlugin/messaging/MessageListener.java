@@ -3,13 +3,16 @@ package net.stormdev.MTA.SMPlugin.messaging;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import org.bukkit.Bukkit;
-
 import net.stormdev.MTA.SMPlugin.connections.Message;
+import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
 import net.stormdev.MTA.SMPlugin.servers.Server;
+import net.stormdev.MTA.SMPlugin.utils.Colors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -33,6 +36,57 @@ public class MessageListener implements Listener<MessageEvent> {
 		else if(title.equals("executeCommand")){
 			String command = message.getMsg();
 			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+			return;
+		}
+		else if(title.equals("printMsg")){
+			String msg = message.getMsg();
+			String coloured = Colors.colorise(msg);
+			Core.logger.info(coloured);
+			return;
+		}
+		else if(title.equals("alert")){
+			String msg = message.getMsg();
+			String coloured = Colors.colorise(msg);
+			Bukkit.broadcastMessage(coloured);
+			return;
+		}
+		else if(title.equals("reload")){
+			Bukkit.getServer().reload();
+		}
+		else if(title.equals("restart")){
+			AntiCrash.getInstance().restart();
+			return;
+		}
+		else if(title.equals("stop")){
+			Core.logger.info("Web connection is stopping server...");
+			Bukkit.getServer().shutdown();
+		}
+		else if(title.equals("setTime")){
+			String command = "time set "+message.getMsg();
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+		}
+		else if(title.equals("kickPlayer")){
+			String args[] = message.getMsg().split(" ");
+			if(args.length < 1){
+				return;
+			}
+			String name = args[0];
+			Player player = Bukkit.getPlayer(name);
+			if(player != null){
+				StringBuilder msgBuilder = new StringBuilder();
+				boolean first = true;
+				for(int i=1;i<args.length;i++){
+					if(!first){
+						msgBuilder.append(" ");
+					}
+					else {
+						first = false;
+					}
+					msgBuilder.append(args[i]);
+				}
+				player.kickPlayer(msgBuilder.toString());
+			}
+			Core.logger.info("Web connection kicked user: "+name);
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
