@@ -2,7 +2,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.stormdev</groupId>
     <artifactId>ServerManagerPlugin</artifactId>
-    <version>1</version>
     <name>ServerManagerPlugin</name>
     <build>
         <finalName>ServerManagerPlugin</finalName>
@@ -128,4 +127,5 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <version>0.2</version>
 </project>

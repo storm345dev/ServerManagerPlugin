@@ -1,7 +1,7 @@
 name: ServerManager
 author: 'storm345 and Bjarn'
 main: net.stormdev.MTA.SMPlugin.core.Core
-version: 0.1
+version: 0.2
 
 commands: 
     servermanager:
