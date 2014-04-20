@@ -12,6 +12,7 @@ import net.stormdev.MTA.SMPlugin.servers.Server;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class MessageListener implements Listener<MessageEvent> {
@@ -71,9 +72,9 @@ public class MessageListener implements Listener<MessageEvent> {
 				return;
 			}
 			String name = args[0];
-			Player player = Bukkit.getPlayer(name);
+			final Player player = Bukkit.getPlayer(name);
 			if(player != null){
-				StringBuilder msgBuilder = new StringBuilder();
+				final StringBuilder msgBuilder = new StringBuilder();
 				boolean first = true;
 				for(int i=1;i<args.length;i++){
 					if(!first){
@@ -84,9 +85,100 @@ public class MessageListener implements Listener<MessageEvent> {
 					}
 					msgBuilder.append(args[i]);
 				}
-				player.kickPlayer(msgBuilder.toString());
+				Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
+
+					@Override
+					public void run() {
+						player.kickPlayer(Colors.colorise(msgBuilder.toString()));
+						return;
+					}});
 			}
 			Core.logger.info("Web connection kicked user: "+name);
+			return;
+		}
+		else if(title.equals("warnPlayer")){
+			String args[] = message.getMsg().split(" ");
+			if(args.length < 2){
+				return;
+			}
+			final String name = args[0];
+			final Player player = Bukkit.getPlayer(name);
+			String msg = "unspecified";
+			if(player != null){
+				final StringBuilder msgBuilder = new StringBuilder();
+				boolean first = true;
+				for(int i=1;i<args.length;i++){
+					if(!first){
+						msgBuilder.append(" ");
+					}
+					else {
+						first = false;
+					}
+					msgBuilder.append(args[i]);
+				}
+				msg = Colors.colorise(msgBuilder.toString());
+				final String mesg = msg;
+				Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
+
+					@Override
+					public void run() {
+						player.sendMessage(ChatColor.RED+"You were warned for "+ChatColor.GRAY+mesg);
+						return;
+					}});
+			}
+			Core.logger.info("Web connection warned user: "+name);
+			return;
+		}
+		else if(title.equals("banPlayer")){
+			String args[] = message.getMsg().split(" ");
+			if(args.length < 2){
+				return;
+			}
+			final String name = args[0];
+			final Player player = Bukkit.getPlayer(name);
+			String msg = "unspecified";
+			if(player != null){
+				final StringBuilder msgBuilder = new StringBuilder();
+				boolean first = true;
+				for(int i=1;i<args.length;i++){
+					if(!first){
+						msgBuilder.append(" ");
+					}
+					else {
+						first = false;
+					}
+					msgBuilder.append(args[i]);
+				}
+				msg = Colors.colorise(msgBuilder.toString());
+				final String mesg = "Banned: "+msg;
+				Bukkit.getScheduler().runTask(Core.plugin, new Runnable(){
+
+					@Override
+					public void run() {
+						player.kickPlayer(mesg);
+						player.setBanned(true);
+						return;
+					}});
+			}
+			Core.logger.info("Web connection banned user: "+name);
+			return;
+		}
+		else if(title.equals("getPlayers")){
+			StringBuilder playerList = new StringBuilder(",");
+			boolean first = true;
+			Player[] online = Bukkit.getOnlinePlayers().clone();
+			for(Player player:online){
+				if(!first){
+					playerList.append(",");
+				}
+				else{
+					first = false;
+				}
+				playerList.append(player.getName());
+			}
+			
+			String msg = playerList.toString();
+			Core.plugin.connection.sendMsg(new Message(message.getFrom(), Core.plugin.connection.getConnectionID(), "playerList", msg));
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
