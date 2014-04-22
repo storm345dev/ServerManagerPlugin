@@ -33,8 +33,7 @@ public class FileTools {
 		String lin = in.toLowerCase();
 		if(lin.startsWith("server")){
 			int pathStart = in.indexOf(File.separator)+1; //First instance of '/' + 1
-			System.out.println("Path start: "+pathStart);
-			if(pathStart < 0 || pathStart > in.length()){ //They typed 'server', or '', or 'server/'
+			if(pathStart <= 0 || pathStart > in.length()){ //They typed 'server', or '', or 'server/'
 				return getServerDirPath();
 			}
 			String path = in.substring(pathStart);
