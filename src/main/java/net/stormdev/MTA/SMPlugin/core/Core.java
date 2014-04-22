@@ -1,6 +1,8 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -9,6 +11,8 @@ import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
+import net.stormdev.MTA.SMPlugin.files.FileTools;
+import net.stormdev.MTA.SMPlugin.files.NotADirectoryException;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
@@ -132,6 +136,22 @@ public class Core extends JavaPlugin {
 				}});
 		}
 		logger.info("Started!");
+		
+		try {
+			String path = "server/plugins";
+			logger.info("web path: "+path);
+			String filePath = FileTools.getPathFromOnlinePath(path, false);
+			logger.info("file path: "+filePath);
+			String newWebPath = FileTools.getOnlinePathFromFilePath(filePath);
+			logger.info("new web path: "+newWebPath);
+			File[] files = FileTools.getFileList(filePath);
+			for(File f:files){
+				logger.info("Found: "+f.getName());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}

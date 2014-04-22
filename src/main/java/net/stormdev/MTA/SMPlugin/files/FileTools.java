@@ -3,6 +3,8 @@ package net.stormdev.MTA.SMPlugin.files;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,8 @@ public class FileTools {
 		in = in.replaceAll(Pattern.quote("/"), Matcher.quoteReplacement(File.separator));
 		String lin = in.toLowerCase();
 		if(lin.startsWith("server")){
-			int pathStart = in.indexOf(Pattern.quote(File.separator))+1; //First instance of '/' + 1
+			int pathStart = in.indexOf(File.separator)+1; //First instance of '/' + 1
+			System.out.println("Path start: "+pathStart);
 			if(pathStart < 0 || pathStart > in.length()){ //They typed 'server', or '', or 'server/'
 				return getServerDirPath();
 			}
@@ -46,8 +49,8 @@ public class FileTools {
 	}
 	
 	public static String getOnlinePathFromFilePath(String in){
+		in = in.replaceAll(Pattern.quote(getServerDirPath()), "server");
 		in = in.replaceAll(Pattern.quote(File.separator), Matcher.quoteReplacement("/"));
-		in = in.replaceAll(getServerDirPath(), "server");
 		return in;
 	}
 	
@@ -58,6 +61,19 @@ public class FileTools {
 		}
 		File[] files = dir.listFiles();
 		return files;
+	}
+	
+	public static List<String> getFileNames(File[] list){
+		List<String> fNames = new ArrayList<String>();
+		for(File f:list){
+			fNames.add(f.getName());
+		}
+		return fNames;
+	}
+	
+	public static List<String> getFileNames(String path) throws NotADirectoryException{
+		File[] list = getFileList(path);
+		return getFileNames(list);
 	}
 	
 	public static boolean renameFile(String path, String newName, boolean override) throws DoesNotExistException, AlreadyExistsException{
