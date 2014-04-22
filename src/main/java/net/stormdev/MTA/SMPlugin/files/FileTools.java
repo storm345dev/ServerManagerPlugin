@@ -53,6 +53,19 @@ public class FileTools {
 		return in;
 	}
 	
+	public static List<FileResult> listFiles(String path) throws NotADirectoryException{
+		List<FileResult> results = new ArrayList<FileResult>();
+		File dir = new File(path);
+		if(!dir.isDirectory()){
+			throw new NotADirectoryException();
+		}
+		File[] files = dir.listFiles();
+		for(File f:files){
+			results.add(new FileResult(f.getName(), f.isDirectory()));
+		}
+		return results;
+	}
+	
 	public static File[] getFileList(String path) throws NotADirectoryException{
 		File dir = new File(path);
 		if(!dir.isDirectory()){
