@@ -1,8 +1,6 @@
 package net.stormdev.MTA.SMPlugin.core;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -11,7 +9,7 @@ import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
-import net.stormdev.MTA.SMPlugin.files.FileTools;
+import net.stormdev.MTA.SMPlugin.files.FileResult;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
