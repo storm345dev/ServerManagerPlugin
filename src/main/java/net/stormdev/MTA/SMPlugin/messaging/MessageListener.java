@@ -7,6 +7,9 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
+import net.stormdev.MTA.SMPlugin.files.FileTools;
+import net.stormdev.MTA.SMPlugin.files.MessageFiles;
+import net.stormdev.MTA.SMPlugin.files.NotADirectoryException;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
 import net.stormdev.MTA.SMPlugin.servers.Server;
 import net.stormdev.MTA.SMPlugin.utils.Colors;
@@ -179,6 +182,18 @@ public class MessageListener implements Listener<MessageEvent> {
 			
 			String msg = playerList.toString();
 			Core.plugin.connection.sendMsg(new Message(message.getFrom(), Core.plugin.connection.getConnectionID(), "playerList", msg));
+			return;
+		}
+		else if(title.equals("getFileList")){
+			String dir = message.getMsg();
+			String systemDir = FileTools.getPathFromOnlinePath(dir, false);
+			String response = dir+":";
+			try {
+				response += MessageFiles.getFileListResponse(systemDir);
+			} catch (NotADirectoryException e) {
+				response += "FileNotFound"; //Not found
+			}
+			Core.plugin.connection.sendMsg(new Message(message.getFrom(), Core.plugin.connection.getConnectionID(), "fileList", response));
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
