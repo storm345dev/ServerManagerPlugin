@@ -1,5 +1,6 @@
 package net.stormdev.MTA.SMPlugin.files;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -7,9 +8,25 @@ import java.util.regex.Pattern;
 public class MessageFiles {
 	private static final String splitter = "|%/\\%|"; // '|%/\%|'
 	
+	public static byte[] getFileResponse(String webPath, boolean allowRoot) throws DoesNotExistException, IsADirectoryException, IOException{
+		String sysPath = FileTools.getPathFromOnlinePath(webPath, allowRoot);
+		byte[] data = FileTools.getFileContents(sysPath);
+		return data;
+	}
+	
 	public static String getFileListResponse(List<FileResult> results) throws NotADirectoryException{
 		StringBuilder list = new StringBuilder(splitter); //Use illegal as a filename in most file systems
 		for(FileResult result:results){
+			if(!result.isDirectory()){
+				continue;
+			}
+			list.append(result.toString());
+			list.append(splitter);
+		}
+		for(FileResult result:results){
+			if(result.isDirectory()){
+				continue;
+			}
 			list.append(result.toString());
 			list.append(splitter);
 		}
@@ -34,7 +51,6 @@ public class MessageFiles {
 				results.add(result);
 			}
 		}
-		
 		return results;
 	}
 }

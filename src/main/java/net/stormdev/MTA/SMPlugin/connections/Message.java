@@ -9,7 +9,7 @@ import net.stormdev.MTA.SMPlugin.core.Core;
 
 public class Message {
 	
-	private static final int msgSplineLength = 256;
+	private static final int msgSplineLength = 5000;
 	private String to;
 	private String from;
 	private String msgTitle;

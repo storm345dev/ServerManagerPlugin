@@ -25,6 +25,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.google.common.base.Charsets;
+
 public class Core extends JavaPlugin {
 	
 	public static FileConfiguration config;

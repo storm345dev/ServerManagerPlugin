@@ -1,5 +1,6 @@
 package net.stormdev.MTA.SMPlugin.messaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,8 @@ import net.stormdev.MTA.SMPlugin.utils.Colors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import com.google.common.base.Charsets;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -194,6 +197,40 @@ public class MessageListener implements Listener<MessageEvent> {
 				response += "FileNotFound"; //Not found
 			}
 			Core.plugin.connection.sendMsg(new Message(message.getFrom(), Core.plugin.connection.getConnectionID(), "fileList", response));
+			return;
+		}
+		else if(title.equals("getFile")){
+			final String path = message.getMsg();
+			final String from = message.getFrom();
+			Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
+
+				@Override
+				public void run() {
+					try {
+						String sysPath = FileTools.getPathFromOnlinePath(path, false);
+						File onSys = new File(sysPath);
+						String name = onSys.getName();
+						long length = onSys.length(); //In bytes
+						if(length > 1024*1024*250){//If bigger than 250MB
+							Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileTooBig"));
+							return;
+						}
+						if(name.toLowerCase().endsWith(".jar") || name.toLowerCase().endsWith(".bat") || name.toLowerCase().endsWith(".exe")){
+							Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "Forbidden"));
+							return;
+						}
+						byte[] data = MessageFiles.getFileResponse(path, false);
+						StringBuilder response = new StringBuilder(name+"|"); // name|data
+						String dataStr = new String(data, Charsets.UTF_8);
+						response.append(dataStr);
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", response.toString()));
+						
+					} catch (Exception e) {
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileNotFound"));
+					}
+					return;
+				}});
+			
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
