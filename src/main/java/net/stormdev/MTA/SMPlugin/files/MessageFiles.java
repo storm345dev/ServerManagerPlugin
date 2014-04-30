@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class MessageFiles {
 	private static final String splitter = "|%/\\%|"; // '|%/\%|'
 	
-	public static byte[] getFileResponse(String webPath, boolean allowRoot) throws DoesNotExistException, IsADirectoryException, IOException{
+	public static byte[] getFileResponse(String webPath, boolean allowRoot) throws DoesNotExistException, IsADirectoryException, IOException, FileLockedException{
 		String sysPath = FileTools.getPathFromOnlinePath(webPath, allowRoot);
 		byte[] data = FileTools.getFileContents(sysPath);
 		return data;

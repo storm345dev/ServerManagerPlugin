@@ -28,6 +28,17 @@ public class FileTools {
 		return serverDir;
 	}
 	
+	public static boolean isFileLocked(File file){
+		boolean isFileUnlocked = false;
+		try {
+		    FileUtils.touch(file);
+		    isFileUnlocked = true;
+		} catch (IOException e) {
+		    isFileUnlocked = false;
+		}
+		return !isFileUnlocked;
+	}
+	
 	public static String getPathFromOnlinePath(String in, boolean allowRoot){
 		in = in.replaceAll(Pattern.quote("/"), Matcher.quoteReplacement(File.separator));
 		String lin = in.toLowerCase();
@@ -88,10 +99,13 @@ public class FileTools {
 		return getFileNames(list);
 	}
 	
-	public static boolean renameFile(String path, String newName, boolean override) throws DoesNotExistException, AlreadyExistsException{
+	public static boolean renameFile(String path, String newName, boolean override) throws DoesNotExistException, AlreadyExistsException, FileLockedException{
 		File original = new File(path);
 		if(!original.exists() || original.length() < 1){
 			throw new DoesNotExistException();
+		}
+		if(isFileLocked(original)){
+			throw new FileLockedException();
 		}
 		String separator = File.separator;
 		int pathEnd = path.lastIndexOf(separator);
@@ -104,11 +118,14 @@ public class FileTools {
 		if(!override && (newFile.exists() || newFile.length() > 0)){
 			throw new AlreadyExistsException();
 		}
+		if(isFileLocked(newFile)){
+			throw new FileLockedException();
+		}
 		boolean success = original.renameTo(newFile);
 		return success;
 	}
 	
-	public static byte[] getFileContents(String path) throws DoesNotExistException, IsADirectoryException, IOException{
+	public static byte[] getFileContents(String path) throws DoesNotExistException, IsADirectoryException, IOException, FileLockedException{
 		
 		File file = new File(path);
 		if(!file.exists() || file.length()<1){
@@ -118,18 +135,24 @@ public class FileTools {
 			throw new IsADirectoryException();
 		}
 		
+		if(isFileLocked(file)){
+			throw new FileLockedException();
+		}
 		byte[] read = FileUtils.readFileToByteArray(file);
 		
 		return read;
 	}
 	
-	public static void saveFile(String path, byte[] data, boolean override) throws AlreadyExistsException, IOException{
+	public static void saveFile(String path, byte[] data, boolean override) throws AlreadyExistsException, IOException, FileLockedException{
 		File file = new File(path);
 		if(!override && (file.exists() || file.length()>0)){
 			throw new AlreadyExistsException();
 		}
 		if(!file.exists() || file.length()<1){
 			file.createNewFile();
+		}
+		if(isFileLocked(file)){
+			throw new FileLockedException();
 		}
 		
 		

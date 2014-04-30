@@ -8,7 +8,10 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
+import net.stormdev.MTA.SMPlugin.files.DoesNotExistException;
+import net.stormdev.MTA.SMPlugin.files.FileLockedException;
 import net.stormdev.MTA.SMPlugin.files.FileTools;
+import net.stormdev.MTA.SMPlugin.files.IsADirectoryException;
 import net.stormdev.MTA.SMPlugin.files.MessageFiles;
 import net.stormdev.MTA.SMPlugin.files.NotADirectoryException;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
@@ -202,34 +205,44 @@ public class MessageListener implements Listener<MessageEvent> {
 		else if(title.equals("getFile")){
 			final String path = message.getMsg();
 			final String from = message.getFrom();
-			Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
-
+			new Thread(){ //Use separate thread to stop ANY server freezing
 				@Override
-				public void run() {
+				public void run(){
 					try {
 						String sysPath = FileTools.getPathFromOnlinePath(path, false);
 						File onSys = new File(sysPath);
 						String name = onSys.getName();
 						long length = onSys.length(); //In bytes
-						if(length > 1024*1024*250){//If bigger than 250MB
+						if(length > 1024*1000){//If bigger than 1000KB
 							Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileTooBig"));
 							return;
 						}
+						/*
 						if(name.toLowerCase().endsWith(".jar") || name.toLowerCase().endsWith(".bat") || name.toLowerCase().endsWith(".exe")){
 							Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "Forbidden"));
 							return;
 						}
+						*/
+						Thread.yield();
 						byte[] data = MessageFiles.getFileResponse(path, false);
+						Thread.yield();
 						StringBuilder response = new StringBuilder(name+"|"); // name|data
 						String dataStr = new String(data, Charsets.UTF_8);
+						Thread.yield();
 						response.append(dataStr);
+						Thread.yield();
 						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", response.toString()));
 						
-					} catch (Exception e) {
+					} catch (IOException e) {
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileNotFound"));
+					} catch (FileLockedException e) {
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileLocked"));
+					} catch (Exception e){
 						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileData", "FileNotFound"));
 					}
 					return;
-				}});
+				}
+			}.start();
 			
 			return;
 		}
