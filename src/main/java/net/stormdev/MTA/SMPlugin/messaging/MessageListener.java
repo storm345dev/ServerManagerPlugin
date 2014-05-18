@@ -8,6 +8,7 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
+import net.stormdev.MTA.SMPlugin.files.AlreadyExistsException;
 import net.stormdev.MTA.SMPlugin.files.FileLockedException;
 import net.stormdev.MTA.SMPlugin.files.FileTools;
 import net.stormdev.MTA.SMPlugin.files.MessageFiles;
@@ -370,6 +371,57 @@ public class MessageListener implements Listener<MessageEvent> {
 				}
 				
 			}.run();
+			return;
+		}
+		else if(title.equals("uploadFile")){
+			String out = message.getMsg();
+			
+			int splitIndex = out.indexOf("|"); //First index of
+			if(splitIndex <= 0){ //Not found, or no path
+				return;
+			}
+			
+			final String path = out.substring(0, splitIndex);
+			final String from = message.getFrom();
+			String dataStr = out.substring(splitIndex+1);
+			
+			final byte[] fileContents = dataStr.getBytes(Charsets.UTF_8);
+			
+			Core.logger.info("Received File: "+path+" Size: "+fileContents.length);
+			
+			new Thread(){
+				@Override
+				public void run(){
+					String sysPath = FileTools.getPathFromOnlinePath(path, false);
+					try {
+						FileTools.saveFile(sysPath, fileContents, false);
+					} catch (AlreadyExistsException e) {
+						//NVM, we've set to override
+					} catch (IOException e) {
+						Core.logger.info("Error saving file! Do you have access to that directory?");
+						return;
+					} catch (FileLockedException e) {
+						Core.logger.info("Error saving file! A file was locked?");
+						return;
+					}
+					
+					try { //Send a file list response
+						String dir = path.substring(0, path.lastIndexOf("/"));
+						String systemDir = FileTools.getPathFromOnlinePath(dir, false);
+						String response = dir+":";
+						try {
+							response += MessageFiles.getFileListResponse(systemDir);
+						} catch (NotADirectoryException e) {
+							response += "FileNotFound"; //Not found
+						}
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileList", response));
+						return;
+					} catch (Exception e) {
+						//Path invalid
+					}
+					return;
+				}
+			}.start();
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){

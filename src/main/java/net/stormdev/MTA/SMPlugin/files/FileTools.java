@@ -206,10 +206,7 @@ public class FileTools {
 			throw new FileLockedException();
 		}
 		
-		
-		FileOutputStream fos = new FileOutputStream(file.getAbsolutePath());
-		fos.write(data);
-		fos.close();
+		Files.write(data, file);
 		return;
 	}
 }
