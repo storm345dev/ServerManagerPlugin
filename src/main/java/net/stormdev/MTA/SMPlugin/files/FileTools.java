@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 
 import net.minecraft.util.org.apache.commons.io.FileUtils;
 
+import com.google.common.io.Files;
+
 public class FileTools {
 	
 	private static String serverDir = null;
@@ -26,6 +28,23 @@ public class FileTools {
 			}
 		}
 		return serverDir;
+	}
+	
+	public static boolean deleteDirectory(File directory) {
+	    if(directory.exists()){
+	        File[] files = directory.listFiles();
+	        if(null!=files){
+	            for(int i=0; i<files.length; i++) {
+	                if(files[i].isDirectory()) {
+	                    deleteDirectory(files[i]);
+	                }
+	                else {
+	                    files[i].delete();
+	                }
+	            }
+	        }
+	    }
+	    return(directory.delete());
 	}
 	
 	public static boolean isFileLocked(File file){
@@ -101,7 +120,7 @@ public class FileTools {
 	
 	public static boolean renameFile(String path, String newName, boolean override) throws DoesNotExistException, AlreadyExistsException, FileLockedException{
 		File original = new File(path);
-		if(!original.exists() || original.length() < 1){
+		if(!original.exists()){
 			throw new DoesNotExistException();
 		}
 		if(isFileLocked(original)){
@@ -115,14 +134,46 @@ public class FileTools {
 			newPath = dir+newName;
 		}
 		File newFile = new File(newPath);
-		if(!override && (newFile.exists() || newFile.length() > 0)){
-			throw new AlreadyExistsException();
+		if(original.isDirectory()){
+			newFile.mkdirs();
+			File[] files = original.listFiles();
+			boolean failed = false;
+			for(File f:files){
+				File newF = new File(newFile.getAbsolutePath()+File.separator+f.getName());
+				newF.getParentFile().mkdirs();
+				try {
+					Files.move(f, newF);
+				} catch (IOException e) {
+					failed = true;
+					continue;
+				}
+				
+				//It was moved
+				if(!f.delete()){
+					f.deleteOnExit();
+				}
+			}
+			if(!failed){
+				if(!original.delete()){
+					original.deleteOnExit();
+				}
+			}
+			return true;//Update list regardless of if it succeeded
 		}
-		if(isFileLocked(newFile)){
-			throw new FileLockedException();
+		else {
+			if(!override && (newFile.exists() || newFile.length() > 0)){
+				throw new AlreadyExistsException();
+			}
+			if(isFileLocked(newFile)){
+				throw new FileLockedException();
+			}
+			try {
+		     	Files.move(original, newFile);
+		     	return true;
+			} catch (IOException e) {
+				return false;
+			}
 		}
-		boolean success = original.renameTo(newFile);
-		return success;
 	}
 	
 	public static byte[] getFileContents(String path) throws DoesNotExistException, IsADirectoryException, IOException, FileLockedException{

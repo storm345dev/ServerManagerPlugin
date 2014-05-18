@@ -8,10 +8,8 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
-import net.stormdev.MTA.SMPlugin.files.DoesNotExistException;
 import net.stormdev.MTA.SMPlugin.files.FileLockedException;
 import net.stormdev.MTA.SMPlugin.files.FileTools;
-import net.stormdev.MTA.SMPlugin.files.IsADirectoryException;
 import net.stormdev.MTA.SMPlugin.files.MessageFiles;
 import net.stormdev.MTA.SMPlugin.files.NotADirectoryException;
 import net.stormdev.MTA.SMPlugin.requests.UpdateRequest;
@@ -23,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -244,6 +243,91 @@ public class MessageListener implements Listener<MessageEvent> {
 				}
 			}.start();
 			
+			return;
+		}
+		else if(title.equals("renameFile")){
+			String[] parts = message.getMsg().split(Pattern.quote("|"));
+			if(parts.length < 2){
+				return;
+			}
+			String path = parts[0];
+			String newName = parts[1];
+			String sysPath = FileTools.getPathFromOnlinePath(path, false);
+			
+			try {
+				if(!FileTools.renameFile(sysPath, newName, true)){
+					return;
+				}
+			} catch (Exception e) {
+				Core.logger.info("File rename failed!");
+				return; //Error
+			}
+			
+			try { //Send a file list response
+				String dir = path.substring(0, path.lastIndexOf("/"));
+				String systemDir = FileTools.getPathFromOnlinePath(dir, false);
+				String response = dir+":";
+				try {
+					response += MessageFiles.getFileListResponse(systemDir);
+				} catch (NotADirectoryException e) {
+					response += "FileNotFound"; //Not found
+				}
+				Core.plugin.connection.sendMsg(new Message(message.getFrom(), Core.plugin.connection.getConnectionID(), "fileList", response));
+				return;
+			} catch (Exception e) {
+				//Path invalid
+			}
+			
+			return;
+		}
+		else if(title.equals("deleteFile")){
+			final String path = message.getMsg();
+			final String from = message.getFrom();
+			final String sysPath = FileTools.getPathFromOnlinePath(path, false);
+			
+			new Thread(){
+				@Override
+				public void run(){
+					File f = new File(sysPath);
+					
+					if(!f.isDirectory()){
+						try {
+							if(!f.delete()){
+								f.deleteOnExit();
+							}
+						} catch (Exception e1) {
+							//Access denied etc
+							return;
+						}
+					}
+					else {
+						try {
+							if(!FileTools.deleteDirectory(f)){
+								f.deleteOnExit();
+							}
+						} catch (Exception e) {
+							// Access denied etc
+						}
+					}
+					
+					try { //Send a file list response
+						String dir = path.substring(0, path.lastIndexOf("/"));
+						String systemDir = FileTools.getPathFromOnlinePath(dir, false);
+						String response = dir+":";
+						try {
+							response += MessageFiles.getFileListResponse(systemDir);
+						} catch (NotADirectoryException e) {
+							response += "FileNotFound"; //Not found
+						}
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileList", response));
+						return;
+					} catch (Exception e) {
+						//Path invalid
+					}
+					return;
+				}
+				
+			}.run();
 			return;
 		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
