@@ -330,6 +330,45 @@ public class MessageListener implements Listener<MessageEvent> {
 			}.run();
 			return;
 		}
+		else if(title.equals("newFolder")){
+			final String path = message.getMsg();
+			final String from = message.getFrom();
+			final String sysPath = FileTools.getPathFromOnlinePath(path, false);
+			if(path.contains(".")){
+				return;
+			}
+			
+			new Thread(){
+				@Override
+				public void run(){
+					File f = new File(sysPath);
+					
+					if(f.exists()){
+						return;
+					}
+					
+					f.mkdirs(); //Create a new folder
+					
+					try { //Send a file list response
+						String dir = path.substring(0, path.lastIndexOf("/"));
+						String systemDir = FileTools.getPathFromOnlinePath(dir, false);
+						String response = dir+":";
+						try {
+							response += MessageFiles.getFileListResponse(systemDir);
+						} catch (NotADirectoryException e) {
+							response += "FileNotFound"; //Not found
+						}
+						Core.plugin.connection.sendMsg(new Message(from, Core.plugin.connection.getConnectionID(), "fileList", response));
+						return;
+					} catch (Exception e) {
+						//Path invalid
+					}
+					return;
+				}
+				
+			}.run();
+			return;
+		}
 		else if(message.getFrom().equals(MessageRecipient.HOST.getConnectionID())){
 			if(title.equals("requestCommand")){
 				String cmd = message.getMsg();
