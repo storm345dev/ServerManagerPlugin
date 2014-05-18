@@ -334,7 +334,9 @@ public class MessageListener implements Listener<MessageEvent> {
 			final String path = message.getMsg();
 			final String from = message.getFrom();
 			final String sysPath = FileTools.getPathFromOnlinePath(path, false);
-			if(path.contains(".")){
+			Core.logger.info("Attempting to create a new folder...");
+			if(path.contains(Pattern.quote("."))){
+				Core.logger.info("Path cannot contain '.'!");
 				return;
 			}
 			
@@ -344,6 +346,7 @@ public class MessageListener implements Listener<MessageEvent> {
 					File f = new File(sysPath);
 					
 					if(f.exists()){
+						Core.logger.info("Folder already exists!");
 						return;
 					}
 					
