@@ -1,7 +1,6 @@
 package net.stormdev.MTA.SMPlugin.core;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -10,10 +9,6 @@ import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
-import net.stormdev.MTA.SMPlugin.files.FileResult;
-import net.stormdev.MTA.SMPlugin.files.FileTools;
-import net.stormdev.MTA.SMPlugin.files.MessageFiles;
-import net.stormdev.MTA.SMPlugin.files.NotADirectoryException;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
@@ -24,8 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import com.google.common.base.Charsets;
+import org.stormdev.SMPlugin.api.API;
 
 public class Core extends JavaPlugin {
 	
@@ -36,6 +30,7 @@ public class Core extends JavaPlugin {
 	public static String verString;
 	public static Random random = new Random();
 	public static UUID instanceId;
+	public static API API;
 	
 	public Encrypter encrypter;
 	public EventManager eventManager;
@@ -139,6 +134,8 @@ public class Core extends JavaPlugin {
 				}});
 		}
 		logger.info("Started!");
+		
+		API = new API(this);
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
