@@ -50,15 +50,28 @@ public class AntiCrash extends Thread {
 					public void run() {
 						Bukkit.getServer().getMotd(); //Do a meaningless task
 						return;
-					}}, 55); //60s
+					}}, 27);
 			} catch (TaskTimeoutException e) {
 				//The task timed out!
-				onTimeout(false);
+				try {
+					Scheduler.runBlockingSyncTask(new Runnable(){
+
+						@Override
+						public void run() {
+							Bukkit.getServer().getMotd(); //Do a meaningless task
+							return;
+						}}, 27);
+				} catch (TaskTimeoutException e1) {
+					onTimeout(false);
+				} catch (Exception e1) {
+					running = false; //Server is stopping/reloading
+				}
+				
 			} catch(Exception e){
 				running = false; //Server is stopping/reloading
 			}
 			try {
-				Thread.sleep(2000); //2s
+				Thread.sleep(5000); //5s
 			} catch (InterruptedException e) {
 			}
 		}
