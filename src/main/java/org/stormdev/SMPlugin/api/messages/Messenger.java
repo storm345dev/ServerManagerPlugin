@@ -16,7 +16,7 @@ public class Messenger implements Messager {
 	@Override
 	public boolean isMessagingAvailable() {
 		try {
-			return Core.plugin.connection.isConnected();
+			return Core.plugin.connection.isConnected() && Core.plugin.connection.isIdentified();
 		} catch (IOException e) {
 			return false;
 		}

@@ -51,6 +51,10 @@ public class HostConnection implements Runnable {
 		return connectionId;
 	}
 	
+	public boolean isIdentified(){
+		return identified;
+	}
+	
 	public void setShouldConnect(boolean con) {
 		connect = con;
 	}
