@@ -20,9 +20,11 @@ import net.stormdev.MTA.SMPlugin.utils.Colors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.stormdev.SMPlugin.api.messages.MessageReceiveEvent;
+import org.stormdev.SMPlugin.api.messages.ReceivedMessage;
+import org.stormdev.servermanager.api.APIProvider;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 public class MessageListener implements Listener<MessageEvent> {
 
@@ -41,6 +43,12 @@ public class MessageListener implements Listener<MessageEvent> {
 		String title = message.getMsgTitle();
 		
 		if(message.getFrom().equals(Core.plugin.connection.getConnectionID())){ //From ourself
+			return;
+		}
+		else if(title.startsWith("pluginMsg:")){
+			String mTitle = title.replaceFirst(Pattern.quote("pluginMsg:"), "");
+			ReceivedMessage rm = new ReceivedMessage(mTitle, message.getMsg(), message.getFrom());
+			APIProvider.getAPI().getEventManager().callEvent(new MessageReceiveEvent(rm));
 			return;
 		}
 		else if(title.equals("executeCommand")){

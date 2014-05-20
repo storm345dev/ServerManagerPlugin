@@ -92,4 +92,9 @@ public class API implements ServerManagerAPI {
 	public Messager getMessenger() {
 		return messenger;
 	}
+
+	@Override
+	public String getOwnConnectionID() {
+		return Core.plugin.connection.getConnectionID();
+	}
 }
