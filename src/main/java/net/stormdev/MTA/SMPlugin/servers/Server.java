@@ -3,10 +3,17 @@ package net.stormdev.MTA.SMPlugin.servers;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.stormdev.servermanager.api.APIProvider;
+import org.stormdev.servermanager.api.messaging.InvalidRecipientException;
+import org.stormdev.servermanager.api.messaging.MessageRecipient;
+import org.stormdev.servermanager.api.messaging.MessageSendFailedException;
+import org.stormdev.servermanager.api.messaging.MessagingUnavailableException;
+
 import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.core.Core;
 
-public class Server {
+public class Server implements org.stormdev.servermanager.api.messaging.Server{
+	private MessageRecipient rec;
 	private String connectionId;
 	private String title;
 	private String description;
@@ -38,6 +45,7 @@ public class Server {
 	
 	private Server(String con, String title, String description, double TPS, int playerCount, int maxPlayers, int resourceScore, boolean open){
 		this.connectionId = con;
+		this.rec = MessageRecipient.create(con);
 		this.title = title;
 		this.description = description;
 		this.TPS = TPS;
@@ -140,5 +148,30 @@ public class Server {
 		this.maxPlayers = maxPlayers;
 		this.resourceScore = rScore;
 		this.open = open;
+	}
+
+	@Override
+	public MessageRecipient getAsMessageRecipient() {
+		return rec;
+	}
+
+	@Override
+	public String getServerName() {
+		return getTitle();
+	}
+
+	@Override
+	public int getOnlinePlayerCount() {
+		return getPlayerCount();
+	}
+
+	@Override
+	public String getServerID() {
+		return getConnectionId();
+	}
+
+	@Override
+	public void sendMessage(String title, String message) throws InvalidRecipientException, MessagingUnavailableException, MessageSendFailedException {
+		APIProvider.getAPI().getMessenger().sendMessage(getAsMessageRecipient(), title, message);
 	}
 }

@@ -11,7 +11,7 @@ import net.stormdev.MTA.SMPlugin.messaging.MessageRecipient;
 
 import org.bukkit.Bukkit;
 
-public class Servers {
+public class Servers implements org.stormdev.servermanager.api.messaging.Servers{
 	private volatile Map<String, Server> servers = new HashMap<String, Server>();
 	
 	public synchronized int getConnectedCount(){
@@ -72,6 +72,20 @@ public class Servers {
 				Core.plugin.connection.sendMsg(new Message(MessageRecipient.HOST.getConnectionID(), Core.plugin.connection.getConnectionID(), "getServers", "getServers"));
 				return;
 			}});
+	}
+
+	@Override
+	public Map<String, org.stormdev.servermanager.api.messaging.Server> getServers() {
+		Map<String, org.stormdev.servermanager.api.messaging.Server> srvs = new HashMap<String, org.stormdev.servermanager.api.messaging.Server>();
+		for(String id:new ArrayList<String>(servers.keySet())){
+			srvs.put(id, servers.get(id));
+		}
+		return srvs;
+	}
+
+	@Override
+	public boolean isServerConnected(String serverID) {
+		return servers.containsKey(serverID);
 	}
 
 }

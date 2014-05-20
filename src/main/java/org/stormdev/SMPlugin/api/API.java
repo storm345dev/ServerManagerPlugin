@@ -5,13 +5,19 @@ import java.lang.reflect.Method;
 
 import net.stormdev.MTA.SMPlugin.core.Core;
 
+import org.stormdev.SMPlugin.api.messages.Messenger;
 import org.stormdev.servermanager.api.APIProvider;
 import org.stormdev.servermanager.api.APIProviderType;
 import org.stormdev.servermanager.api.ServerManagerAPI;
+import org.stormdev.servermanager.api.listeners.ListenerManager;
+import org.stormdev.servermanager.api.messaging.Messager;
+import org.stormdev.servermanager.api.messaging.Servers;
 
 public class API implements ServerManagerAPI {
 	
 	private Core plugin;
+	private ListenerManager listenerManager;
+	private Messenger messenger;
 	
 	public API(Core core){
 		this.plugin = core;
@@ -45,6 +51,9 @@ public class API implements ServerManagerAPI {
 			return;
 		}
 		
+		this.listenerManager = new org.stormdev.SMPlugin.api.listeners.ListenerManager();
+		this.messenger = new org.stormdev.SMPlugin.api.messages.Messenger();
+		
 		//TODO Actually do useful stuff
 		
 		Core.logger.info("API loaded!");
@@ -67,5 +76,20 @@ public class API implements ServerManagerAPI {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public ListenerManager getEventManager() {
+		return listenerManager;
+	}
+
+	@Override
+	public Servers getServers() {
+		return Core.plugin.servers;
+	}
+
+	@Override
+	public Messager getMessenger() {
+		return messenger;
 	}
 }
