@@ -48,6 +48,11 @@ public class MessageListener implements Listener<MessageEvent> {
 			APIProvider.getAPI().getEventManager().callEvent(new MessageReceiveEvent(rm));
 			return;
 		}
+		else if(title.equals("testString")){
+			boolean equal = Core.plugin.testString.equals(message.getMsg());
+			System.out.println("Test string success: "+equal);
+			return;
+		}
 		else if(message.getFrom().equals(Core.plugin.connection.getConnectionID())){ //From ourself
 			return;
 		}

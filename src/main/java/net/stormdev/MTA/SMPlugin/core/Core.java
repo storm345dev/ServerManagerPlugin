@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import net.stormdev.MTA.SMPlugin.commands.ServerListCommandExecutor;
 import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
+import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
@@ -51,6 +52,8 @@ public class Core extends JavaPlugin {
 	private ServerOutput outputReader;
 	
 	private BukkitTask idle;
+	
+	public String testString;
 	
 	public boolean getServerShouldOpenCloseDynamically(){
 		return dynamicOpenClose;
@@ -136,6 +139,23 @@ public class Core extends JavaPlugin {
 		logger.info("Started!");
 		
 		API = new API(this);
+		
+		if(Core.logger.isDebug()){
+		Bukkit.getScheduler().runTaskLaterAsynchronously(Core.plugin, new Runnable(){
+
+			@Override
+			public void run() {
+				StringBuilder longString = new StringBuilder();
+				while(longString.length() < 30000){
+					longString.append(UUID.randomUUID().toString());
+				}
+				
+				testString = longString.toString();
+				
+				connection.sendMsg(new Message(connection.getConnectionID(), connection.getConnectionID(), "testString", longString.toString()));
+				return;
+			}}, 100l);
+		}
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}

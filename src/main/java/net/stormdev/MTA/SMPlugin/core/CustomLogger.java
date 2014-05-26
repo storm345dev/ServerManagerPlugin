@@ -24,6 +24,10 @@ public class CustomLogger {
 		this.logger = logger;
 	}
 	
+	public boolean isDebug(){
+		return debug;
+	}
+	
 	public void debug(String msg){
 		if(debug){
 			info(msg);
