@@ -53,9 +53,11 @@ public class MessageListener implements Listener<MessageEvent> {
 			System.out.println("Test string success: "+equal);
 			return;
 		}
+		/*
 		else if(message.getFrom().equals(Core.plugin.connection.getConnectionID())){ //From ourself
 			return;
 		}
+		*/
 		else if(title.equals("executeCommand")){
 			String command = message.getMsg();
 			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
@@ -240,7 +242,7 @@ public class MessageListener implements Listener<MessageEvent> {
 						byte[] data = MessageFiles.getFileResponse(path, false);
 						Thread.yield();
 						StringBuilder response = new StringBuilder(name+"|"); // name|data
-						String dataStr = new String(data, Charsets.UTF_8);
+						String dataStr = new String(data, Charsets.ISO_8859_1);
 						Thread.yield();
 						response.append(dataStr);
 						Thread.yield();
@@ -387,6 +389,7 @@ public class MessageListener implements Listener<MessageEvent> {
 			return;
 		}
 		else if(title.equals("uploadFile")){
+			System.out.println("Received a file...");
 			String out = message.getMsg();
 			
 			int splitIndex = out.indexOf("|"); //First index of
@@ -398,7 +401,7 @@ public class MessageListener implements Listener<MessageEvent> {
 			final String from = message.getFrom();
 			String dataStr = out.substring(splitIndex+1);
 			
-			final byte[] fileContents = dataStr.getBytes(Charsets.UTF_8);
+			final byte[] fileContents = dataStr.getBytes(Charsets.ISO_8859_1);
 			
 			Core.logger.info("Received File: "+path+" Size: "+fileContents.length);
 			
