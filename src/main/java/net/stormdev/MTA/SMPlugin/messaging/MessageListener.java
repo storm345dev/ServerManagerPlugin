@@ -9,6 +9,7 @@ import net.stormdev.MTA.SMPlugin.core.AntiCrash;
 import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.events.Listener;
 import net.stormdev.MTA.SMPlugin.files.AlreadyExistsException;
+import net.stormdev.MTA.SMPlugin.files.ByteStringTools;
 import net.stormdev.MTA.SMPlugin.files.FileLockedException;
 import net.stormdev.MTA.SMPlugin.files.FileTools;
 import net.stormdev.MTA.SMPlugin.files.MessageFiles;
@@ -242,7 +243,7 @@ public class MessageListener implements Listener<MessageEvent> {
 						byte[] data = MessageFiles.getFileResponse(path, false);
 						Thread.yield();
 						StringBuilder response = new StringBuilder(name+"|"); // name|data
-						String dataStr = new String(data, Charsets.ISO_8859_1);
+						String dataStr = ByteStringTools.getAsString(data);
 						Thread.yield();
 						response.append(dataStr);
 						Thread.yield();
@@ -401,7 +402,7 @@ public class MessageListener implements Listener<MessageEvent> {
 			final String from = message.getFrom();
 			String dataStr = out.substring(splitIndex+1);
 			
-			final byte[] fileContents = dataStr.getBytes(Charsets.ISO_8859_1);
+			final byte[] fileContents = ByteStringTools.fromString(dataStr);
 			
 			Core.logger.info("Received File: "+path+" Size: "+fileContents.length);
 			

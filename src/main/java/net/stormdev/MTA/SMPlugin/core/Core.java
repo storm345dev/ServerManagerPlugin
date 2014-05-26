@@ -12,6 +12,7 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
+import net.stormdev.MTA.SMPlugin.files.ByteStringTools;
 import net.stormdev.MTA.SMPlugin.files.DoesNotExistException;
 import net.stormdev.MTA.SMPlugin.files.FileLockedException;
 import net.stormdev.MTA.SMPlugin.files.FileTools;
