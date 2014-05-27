@@ -78,7 +78,12 @@ public class ServerOutput extends AbstractAppender {
 
 			@Override
 			public void run() {
-				String out = String.format(msg, Locale.ENGLISH);
+				String out;
+				try {
+					out = String.format(msg, Locale.ENGLISH);
+				} catch (Exception e) {
+					out = msg;
+				}
 				/*
 				if(out.contains("<") && out.contains(">")){
 					int start = out.indexOf("<");
