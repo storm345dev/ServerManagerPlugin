@@ -1,7 +1,7 @@
 package net.stormdev.MTA.SMPlugin.commands;
 
 import net.stormdev.MTA.SMPlugin.core.Core;
-import net.stormdev.MTA.SMPlugin.menus.AdminServerMenu;
+import net.stormdev.MTA.SMPlugin.menus.ServerListMenu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,7 +38,7 @@ public class ServerListCommandExecutor implements CommandExecutor {
 				@Override
 				public void run() {
 					//Open the ManagerGUI
-					new AdminServerMenu(pl);
+					new ServerListMenu(pl);
 					return;
 				}}, 2l);
 			return true;

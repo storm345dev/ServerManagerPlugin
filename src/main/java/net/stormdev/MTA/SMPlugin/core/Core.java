@@ -1,8 +1,6 @@
 package net.stormdev.MTA.SMPlugin.core;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
@@ -12,12 +10,6 @@ import net.stormdev.MTA.SMPlugin.connections.Message;
 import net.stormdev.MTA.SMPlugin.events.ConnectEventListener;
 import net.stormdev.MTA.SMPlugin.events.EventManager;
 import net.stormdev.MTA.SMPlugin.events.ServerEventListener;
-import net.stormdev.MTA.SMPlugin.files.ByteStringTools;
-import net.stormdev.MTA.SMPlugin.files.DoesNotExistException;
-import net.stormdev.MTA.SMPlugin.files.FileLockedException;
-import net.stormdev.MTA.SMPlugin.files.FileTools;
-import net.stormdev.MTA.SMPlugin.files.IsADirectoryException;
-import net.stormdev.MTA.SMPlugin.files.MessageFiles;
 import net.stormdev.MTA.SMPlugin.messaging.Encrypter;
 import net.stormdev.MTA.SMPlugin.messaging.MessageListener;
 import net.stormdev.MTA.SMPlugin.servers.Servers;
@@ -29,8 +21,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.stormdev.SMPlugin.api.API;
-
-import com.google.common.base.Charsets;
 
 public class Core extends JavaPlugin {
 	
@@ -60,6 +50,7 @@ public class Core extends JavaPlugin {
 	private boolean restartOnCrash = true;
 	private String restartScript;
 	private ServerOutput outputReader;
+	private BukkitTask serverUpdate = null;
 	
 	private BukkitTask idle;
 	
@@ -167,12 +158,21 @@ public class Core extends JavaPlugin {
 			}}, 100l);
 		}
 		
+		serverUpdate = Bukkit.getScheduler().runTaskTimer(this, new Runnable(){
+
+			@Override
+			public void run() {
+				servers.updateServers();
+				return;
+			}}, 15*20l, 10*20l);
+		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
 	}
 	
 	@Override
 	public void onDisable(){
 		serverMonitor.cancel(); //Terminate it
+		serverUpdate.cancel();
 		idle.cancel();
 		Bukkit.getScheduler().cancelTasks(this);
 		if(outputReader != null){
