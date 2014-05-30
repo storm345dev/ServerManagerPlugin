@@ -46,6 +46,9 @@ public class Servers implements org.stormdev.servermanager.api.messaging.Servers
 		try {
 			servers.clear();
 			for(Server s:srvs){
+				if(s == null){
+					continue;
+				}
 				servers.put(s.getConnectionId(), s);
 			}
 		} catch (Exception e) {
