@@ -135,6 +135,12 @@ public class AntiCrash extends Thread {
 				@Override
 				public void run(){
 					File outFile = new File("SMRestarts"+File.separator+"latest.txt");
+					try {
+						outFile.getParentFile().mkdirs();
+						outFile.createNewFile();
+					} catch (IOException e1) {
+						// oh well
+					}
 					PrintStream ps = null;
 					try {
 						ps = new PrintStream(outFile);
@@ -146,15 +152,8 @@ public class AntiCrash extends Thread {
 						ps.println("Previous server shutdown!");
 					}
 					try {
-						outFile.getParentFile().mkdirs();
-						outFile.createNewFile();
-					} catch (IOException e1) {
-						// oh well
-					}
-					try {
 						ps.println("Starting new server...");
-						Process p = Runtime.getRuntime().exec(cmds);//Actually restart the server
-						p.waitFor();
+						Runtime.getRuntime().exec(cmds);//Actually restart the server
 						ps.println("New server started!");
 					} catch (Exception e) {
 						if(ps != null){
