@@ -109,16 +109,28 @@ public class AntiCrash extends Thread {
 		System.out.println("Restarting...!");
 		try {
 			// "cmd", "/c", "start"
-			String[] cmds = new String[args.length+1];
+			final String[] cmds = new String[args.length+1];
 			for(int i=0;i<args.length;i++){
 				cmds[i] = args[i];
 			}
 			cmds[cmds.length-1] = command;
-			Runtime.getRuntime().exec(cmds); //Actually restart the server
-			System.exit(1); //Exit the current server
+			Runtime.getRuntime().addShutdownHook(new Thread(){
+				@Override
+				public void run(){
+					try {
+						Runtime.getRuntime().exec(cmds);//Actually restart the server
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return;
+				}
+			});
 			
-		} catch (IOException e) {
+			System.exit(0); //Exit the current server
+			
+		} catch (Exception e) {
 			//Oh well...
+			e.printStackTrace();
 		}
 		return;
 	}
