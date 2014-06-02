@@ -134,6 +134,9 @@ public class AntiCrash extends Thread {
 			Runtime.getRuntime().addShutdownHook(new Thread(){
 				@Override
 				public void run(){
+					if(instanceId != Core.instanceId){
+						return;
+					}
 					File outFile = new File("SMRestarts"+File.separator+"latest.txt");
 					try {
 						outFile.getParentFile().mkdirs();
