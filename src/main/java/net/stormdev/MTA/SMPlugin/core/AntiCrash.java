@@ -1,6 +1,14 @@
 package net.stormdev.MTA.SMPlugin.core;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import net.stormdev.MTA.SMPlugin.utils.Scheduler;
@@ -109,6 +117,15 @@ public class AntiCrash extends Thread {
 		System.out.println("Restarting...!");
 		try {
 			// "cmd", "/c", "start"
+			List<String> argss = new ArrayList<String>();
+			for(int i=0;i<args.length;i++){
+				String s = args[i];
+				if(s == null || s.length() < 1){
+					continue;
+				}
+				argss.add(s);
+			}
+			args = argss.toArray(new String[]{});
 			final String[] cmds = new String[args.length+1];
 			for(int i=0;i<args.length;i++){
 				cmds[i] = args[i];
@@ -117,10 +134,36 @@ public class AntiCrash extends Thread {
 			Runtime.getRuntime().addShutdownHook(new Thread(){
 				@Override
 				public void run(){
+					File outFile = new File("SMRestarts"+File.separator+"latest.txt");
+					PrintStream ps = null;
 					try {
-						Runtime.getRuntime().exec(cmds);//Actually restart the server
+						ps = new PrintStream(outFile);
+					} catch (FileNotFoundException e2) {
+						//whatever
+					}
+					if(ps != null){
+						ps.println("Start restart log:");
+						ps.println("Previous server shutdown!");
+					}
+					try {
+						outFile.getParentFile().mkdirs();
+						outFile.createNewFile();
+					} catch (IOException e1) {
+						// oh well
+					}
+					try {
+						ps.println("Starting new server...");
+						Process p = Runtime.getRuntime().exec(cmds);//Actually restart the server
+						p.waitFor();
+						ps.println("New server started!");
 					} catch (Exception e) {
-						e.printStackTrace();
+						if(ps != null){
+							e.printStackTrace(ps);
+						}
+					}
+					if(ps != null){
+						ps.println("Terminating restart handler...");
+						ps.close();
 					}
 					return;
 				}

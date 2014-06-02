@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Random;
 import java.util.UUID;
 
+import net.stormdev.MTA.SMPlugin.commands.SMRestartCommandExecutor;
 import net.stormdev.MTA.SMPlugin.commands.ServerListCommandExecutor;
 import net.stormdev.MTA.SMPlugin.commands.ServerManagerCommandExecutor;
 import net.stormdev.MTA.SMPlugin.connections.Message;
@@ -202,6 +203,7 @@ public class Core extends JavaPlugin {
 	private void setupCMDExecutors(){
 		getCommand("servermanager").setExecutor(new ServerManagerCommandExecutor());
 		getCommand("serverlist").setExecutor(new ServerListCommandExecutor());
+		getCommand("smrestart").setExecutor(new SMRestartCommandExecutor());
 	}
 	
 	public void loadConfigSettings(){

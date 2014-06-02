@@ -16,3 +16,9 @@ commands:
         permission: servermanager.user
         permission-message: You don't have access to this command
         default: true
+    smrestart:
+        description: Attempts to restart the server
+        usage: /<command>
+        permission: servermanager.operator
+        permission-message: You don't have access to this command
+        default: op
