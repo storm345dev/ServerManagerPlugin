@@ -82,7 +82,7 @@ public class ServerOutput extends AbstractAppender {
 				try {
 					out = String.format(msg, Locale.ENGLISH);
 				} catch (Exception e) {
-					out = msg;
+					out = "(System)"+msg;
 				}
 				/*
 				if(out.contains("<") && out.contains(">")){
