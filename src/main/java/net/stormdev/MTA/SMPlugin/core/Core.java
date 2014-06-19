@@ -168,6 +168,7 @@ public class Core extends JavaPlugin {
 			}}, 15*20l, 10*20l);
 		
 		logger.info("ServerManagerPlugin v"+verString+" has been enabled!");
+		
 	}
 	
 	@Override

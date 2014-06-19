@@ -1,12 +1,13 @@
 package net.stormdev.MTA.SMPlugin.core;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import net.stormdev.MTA.SMPlugin.utils.Scheduler;
 import net.stormdev.MTA.SMPlugin.utils.TaskTimeoutException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 public class AntiCrash extends Thread {
 	
@@ -24,6 +26,7 @@ public class AntiCrash extends Thread {
 	private String command;
 	private boolean running = true;
 	private String[] args;
+	private int port;
 	
 	public AntiCrash(UUID instance, String startCommand){
 		this.instanceId = instance;
@@ -32,6 +35,7 @@ public class AntiCrash extends Thread {
 		String prefix = Core.config.getString("server.settings.restartScriptPrefix");
 		prefix = prefix.trim(); //Remove whitespace
 		args = prefix.split(" "); //Each cmd arg
+		port = Bukkit.getPort();
 	}
 	
 	public static AntiCrash getInstance(){
@@ -48,6 +52,7 @@ public class AntiCrash extends Thread {
 	
 	@Override
 	public void run(){
+		Core.logger.info("Auto-restart is "+ChatColor.GREEN+"enabled!");
 		//Main script
 		while(running){
 			//Check if it's crashed
@@ -94,7 +99,7 @@ public class AntiCrash extends Thread {
 				@Override
 				public void run() {
 					try {
-						Thread.sleep(120000);
+						Thread.sleep(Integer.MAX_VALUE);
 					} catch (InterruptedException e) {
 						//Lol
 					}
@@ -131,7 +136,10 @@ public class AntiCrash extends Thread {
 				cmds[i] = args[i];
 			}
 			cmds[cmds.length-1] = command;
-			Runtime.getRuntime().addShutdownHook(new Thread(){
+			
+			final Thread oldServer = Thread.currentThread();
+			
+			Thread onShutOff = new Thread(){
 				@Override
 				public void run(){
 					if(instanceId != Core.instanceId){
@@ -156,8 +164,62 @@ public class AntiCrash extends Thread {
 					}
 					try {
 						ps.println("Starting new server...");
-						Runtime.getRuntime().exec(cmds);//Actually restart the server
-						ps.println("New server started!");
+						Thread daemon = new Thread(){
+							
+							@Override
+							public void run(){
+								File outFile = new File("SMRestarts"+File.separator+"startScriptLatest.txt");
+								try {
+									outFile.getParentFile().mkdirs();
+									outFile.createNewFile();
+								} catch (IOException e1) {
+									// oh well
+								}
+								PrintStream ps = null;
+								try {
+									ps = new PrintStream(outFile);
+								} catch (FileNotFoundException e2) {
+									//whatever
+								}
+								
+								ps.println("Successfully launched startup thread!");
+								
+								long startMS = System.currentTimeMillis();
+								ps.println("Waiting on old server...");
+								boolean oldRunning = true;
+								while(oldRunning){
+									try {
+										ServerSocket ss = new ServerSocket(port);
+										ss.setReuseAddress(true);
+										ss.close();
+										oldRunning = false;
+									} catch (IOException e1) {
+										//Old is running, port cannot bind
+									}
+								}
+								
+								ps.println("Old server FULLY shutdown after "+(System.currentTimeMillis()-startMS)+" milliseconds!");
+								
+								ps.println("Launching server...");
+								
+								Process newServer = null;
+								try {
+									newServer = Runtime.getRuntime().exec(cmds); //Actually restart the server
+									ps.println("New server successfully launched!");
+								} catch (IOException e) {
+									e.printStackTrace(ps);
+								}
+								
+								if(ps != null){
+									ps.close();
+								}
+								return;
+							}
+						};
+						daemon.setDaemon(true);
+						daemon.start();
+						
+						ps.println("New server starting!");
 					} catch (Exception e) {
 						if(ps != null){
 							e.printStackTrace(ps);
@@ -169,7 +231,9 @@ public class AntiCrash extends Thread {
 					}
 					return;
 				}
-			});
+			};
+			onShutOff.setDaemon(true);
+			Runtime.getRuntime().addShutdownHook(onShutOff);
 			
 			System.exit(0); //Exit the current server
 			
