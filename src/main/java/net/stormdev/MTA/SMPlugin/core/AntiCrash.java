@@ -137,8 +137,6 @@ public class AntiCrash extends Thread {
 			}
 			cmds[cmds.length-1] = command;
 			
-			final Thread oldServer = Thread.currentThread();
-			
 			Thread onShutOff = new Thread(){
 				@Override
 				public void run(){
@@ -201,11 +199,42 @@ public class AntiCrash extends Thread {
 								ps.println("Old server FULLY shutdown after "+(System.currentTimeMillis()-startMS)+" milliseconds!");
 								
 								ps.println("Launching server...");
+								ps.println("Executing system command(s):");
+								StringBuilder sb = new StringBuilder();
+								for(String cmd:cmds){
+									if(sb.length() > 0){
+										sb.append(", ");
+									}
+									sb.append(cmd);
+								}
+								ps.println("["+sb.toString()+"]");
+								if(cmds.length < 2){
+									ps.println("(Single)");
+								}
+								
+								String current;
+								try {
+									current = new java.io.File( "." ).getCanonicalPath();
+									 ps.println("In directory: "+current);
+								} catch (IOException e1) {
+									ps.println("(Unable to determine currest directory path)");
+								}
+						       
 								
 								Process newServer = null;
 								try {
-									newServer = Runtime.getRuntime().exec(cmds); //Actually restart the server
-									ps.println("New server successfully launched!");
+									if(cmds.length > 1){
+										newServer = Runtime.getRuntime().exec(cmds); //Actually restart the server
+									}
+									else {
+										newServer = Runtime.getRuntime().exec(cmds[0]); //Start the server
+									}
+									if(newServer != null){
+										ps.println("New server successfully launched!");
+									}
+									else {
+										ps.println("Failed to launch!");
+									}
 								} catch (IOException e) {
 									e.printStackTrace(ps);
 								}
