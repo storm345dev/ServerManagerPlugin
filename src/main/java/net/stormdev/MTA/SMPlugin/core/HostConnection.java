@@ -36,6 +36,8 @@ public class HostConnection implements Runnable {
 	private volatile long connectedTime = 0;
 	private volatile long aliveTime = 0;
 	
+	private volatile boolean keepAliveRunning = false;
+	
 	private volatile boolean connect = true;
 	
 	private static HostConnection instance;
@@ -85,6 +87,10 @@ public class HostConnection implements Runnable {
 	}
 	
 	private void startKeepAlive(){
+		if(keepAliveRunning){
+			return;
+		}
+		keepAliveRunning = true;
 		Bukkit.getScheduler().runTaskAsynchronously(Core.plugin, new Runnable(){
 
 			@Override
@@ -104,6 +110,8 @@ public class HostConnection implements Runnable {
 						Thread.sleep(1500); //1.5s
 					} catch (InterruptedException e) {
 						//Oh well
+						keepAliveRunning = false;
+						return;
 					}
 					if((!identified && connectedTime > 0 && (System.currentTimeMillis() - connectedTime) > 10000) //10s timeout
 							|| (aliveTime > 0 && (System.currentTimeMillis() - aliveTime) > 10000)){ //10s timeout
@@ -115,6 +123,7 @@ public class HostConnection implements Runnable {
 						i = 0;
 					}
  				}
+				keepAliveRunning = false;
 				return;
 			}});
 	}
