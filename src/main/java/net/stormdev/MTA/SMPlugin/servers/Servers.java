@@ -83,6 +83,7 @@ public class Servers implements org.stormdev.servermanager.api.messaging.Servers
 		for(String id:new ArrayList<String>(servers.keySet())){
 			srvs.put(id, servers.get(id));
 		}
+		//System.out.println("There are "+srvs.size()+" servers connected to this network!");
 		return srvs;
 	}
 

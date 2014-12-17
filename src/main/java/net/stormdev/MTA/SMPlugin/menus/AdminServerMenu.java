@@ -40,7 +40,7 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		int icons = ((int) Math.ceil(quant))  *  9; //A multiple of 9 that fits all servers
 		title = Core.colors.getTitle()+"Server List";
 		
-		menu = new IconMenu(title, icons, this, Core.plugin);
+		menu = new IconMenu(title, icons, this, Core.plugin, true);
 		
 		//Load menu icons
 		open(player);
@@ -102,7 +102,7 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 			//Make the inventory bigger
 			player.setMetadata("ignoreInvClose", new MetaValue(true, Core.plugin)); //Effective cancel destroying this because of inv close
 			view.close();
-			menu = new IconMenu(title, icons, this, Core.plugin);
+			menu = new IconMenu(title, icons, this, Core.plugin, true);
 			
 			Bukkit.getScheduler().runTaskLaterAsynchronously(Core.plugin, new Runnable(){
 
@@ -200,7 +200,7 @@ public class AdminServerMenu implements OptionClickEventHandler,Listener<ServerL
 		}
 		
 		if(open){	//Open
-			return new Wool(color).toItemStack();
+			return new ItemStack(Material.WOOL, 1, color.getData());
 		}
 		else{ //Not open
 			//Get correct colours

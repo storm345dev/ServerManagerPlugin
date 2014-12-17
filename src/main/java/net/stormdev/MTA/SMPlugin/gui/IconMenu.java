@@ -8,6 +8,7 @@ import net.stormdev.MTA.SMPlugin.core.Core;
 import net.stormdev.MTA.SMPlugin.utils.MetaValue;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,12 +29,14 @@ public class IconMenu implements Listener {
 	private Plugin plugin;
 
 	private String[] optionNames;
-	private ItemStack[] optionIcons;
+	private ItemStack[] optionIcons = new ItemStack[]{};
 	private Boolean enabled = true;
 	private String metaData;
+	private boolean destroyOnClose;
 
 	public IconMenu(String name, int size, OptionClickEventHandler handler,
-			Plugin plugin) {
+			Plugin plugin, boolean destroyOnClose) {
+		this.destroyOnClose = destroyOnClose;
 		this.name = name;
 		this.size = size;
 		this.handler = handler;
@@ -42,6 +45,21 @@ public class IconMenu implements Listener {
 		this.optionIcons = new ItemStack[size];
 		this.metaData = "menu." + UUID.randomUUID().toString();
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+	}
+	
+	@EventHandler
+	void close(InventoryCloseEvent event){
+		if(!destroyOnClose){
+			return;
+		}
+		Player player = (Player)event.getPlayer();
+		if(!player.hasMetadata(metaData)){
+			return;
+		}
+		if(!ChatColor.stripColor(event.getInventory().getTitle()).equalsIgnoreCase(ChatColor.stripColor(this.name))){
+			return;
+		}
+		destroy();
 	}
 	
 	public synchronized int getSize(){
@@ -85,7 +103,7 @@ public class IconMenu implements Listener {
 		handler = null;
 		plugin = null;
 		optionNames = null;
-		optionIcons = null;
+		optionIcons = new ItemStack[]{};
 		enabled = false;
 		metaData = null;
 	}

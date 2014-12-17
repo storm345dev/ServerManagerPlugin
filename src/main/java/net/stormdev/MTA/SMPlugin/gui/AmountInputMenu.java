@@ -14,7 +14,7 @@ public class AmountInputMenu {
 
 	public AmountInputMenu(
 			double currentAmount, ConfirmHandler cHandler) {
-		this.menu = new IconMenu(ChatColor.BLUE+"Set Amount", 9, new ClickHandler(this), Core.plugin);
+		this.menu = new IconMenu(ChatColor.BLUE+"Set Amount", 9, new ClickHandler(this), Core.plugin, true);
 		
 		this.amount = currentAmount;
 		this.cHandler = cHandler;
