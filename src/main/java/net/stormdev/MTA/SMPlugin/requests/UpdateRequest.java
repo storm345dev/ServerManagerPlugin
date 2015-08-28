@@ -24,7 +24,7 @@ public class UpdateRequest {
 		String name = Core.plugin.getServerName();
 		String desc = Core.plugin.getServerDescription();
 		boolean open = Core.plugin.isServerOpen();
-		int players = server.getOnlinePlayers().length;
+		int players = server.getOnlinePlayers().size();
 		int maxPlayers = server.getMaxPlayers();
 		double TPS = roundTo2Decimals(ServerMonitor.getTPS());
 		

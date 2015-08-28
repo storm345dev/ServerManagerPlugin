@@ -191,7 +191,7 @@ public class MessageListener implements Listener<MessageEvent> {
 		else if(title.equals("getPlayers")){
 			StringBuilder playerList = new StringBuilder(",");
 			boolean first = true;
-			Player[] online = Bukkit.getOnlinePlayers().clone();
+			Player[] online = Bukkit.getOnlinePlayers().toArray(new Player[]{}).clone();
 			for(Player player:online){
 				if(!first){
 					playerList.append(",");
